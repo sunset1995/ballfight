@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Training AI</title>
+	<script type="text/javascript">
+		window.DeviceDelay = 0.05;
+	</script>
+</head>
+<body>
+	
+	<div id="feedback-info">
+		<strong></strong>
+	</div>
+
+	<button id="start-fight" style="opacity:0; width:0; height: 0; overflow:hidden; padding:0;">Fight</button>
+	<button id="fake-start-fight" class="start-fight">Fight</button>
+
+	<div id="arena"></div>
+	<div id="hero"></div>
+	<div id="monster"></div>
+
+	<link rel="stylesheet" type="text/css" href="css/physicalEngine.css">
+	<script type="text/javascript" src="js/requestAnimationFramePatch.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/physicalEngine.js"></script>
+	<script type="text/javascript" src="js/gameLogic.js"></script>
+
+	<script type="text/javascript">
+		// Variable setting
+		window.MonsterKeyboardEnable = false;
+		window.HeroKeyboardEnable = false;
+
+		window.IoTtalk_ID = prompt('Your personal IoTtalk ID:', 'AI_training') || 'AI_training';
+
+		var FeaturesRoom = 'BallFight_Room';
+		var FeaturesStatus = 'BallFight_Status';
+		var FeaturesHeroAction = 'BallFight_Hero_Action';
+		var FeaturesMonsterAction = 'BallFight_Monster_Action';
+
+		var IoTtalk_profile = {
+			'd_name': window.IoTtalk_ID,
+			'dm_name': 'BallFighting',
+			'is_sim': false,
+			'df_list': [FeaturesRoom, FeaturesStatus, FeaturesHeroAction, FeaturesMonsterAction]
+		};
+
+		var StatusTimestamp = -1;
+		var MonsterTimestamp = -1;
+		var HeroTimestamp = -1;
+		var MonsterForce = [0, 0];
+		var HeroForce = [0, 0];
+
+		// Ajax functions to communicate to IoTtalk
+		function micmicDeviceDelay(status, dly) {
+			status[0] += (Hero.vx + Hero.ax * dly / 2) * dly;
+			status[1] += (Hero.vy + Hero.ay * dly / 2) * dly;
+			status[4] += (Monster.vx + Monster.ax * dly / 2) * dly;
+			status[5] += (Monster.vy + Monster.ay * dly / 2) * dly;
+
+			status[2] += Hero.ax * dly;
+			status[3] += Hero.ay * dly;
+			status[6] += Monster.ax * dly;
+			status[7] += Monster.ay * dly;
+
+			status[8] -= 0.05 * (dly / 0.016);
+		}
+		function packInfo() {
+			var ret = [
+						Hero.x - Arena.x(),
+						Hero.y - Arena.y(),
+						Hero.vx,
+						Hero.vy,
+						Monster.x - Arena.x(),
+						Monster.y - Arena.y(),
+						Monster.vx,
+						Monster.vy,
+						Arena.r()
+						];
+			micmicDeviceDelay(ret, window.DeviceDelay);
+			return ret;
+		}
+
+		function register() {
+			$('#start-fight').css('display', 'none');
+			$('#feedback-info strong').css('display', 'block').text('Processing registration...');
+			$.ajax({
+				type: "POST",
+				url: '/' + IoTtalk_ID,
+				contentType: "application/json; charset=utf-8",
+				data: JSON.stringify({'profile': IoTtalk_profile}),
+				success: function(res) {
+					$('#feedback-info strong').text('Registration completed');
+					$('#start-fight').css('display', 'block');
+					pushFinal();
+				},
+				error: function(err, st) {
+					$('#feedback-info strong').text('Registration failed: ' + st.toString());
+					console.log(err)
+					console.log(st)
+				},
+				dataType: 'text'
+			});
+		}
+
+		function pullStatus(timestamp) {
+			$.ajax({
+				type: "GET",
+				url: '/' + IoTtalk_ID + '/' + FeaturesRoom,
+				success: function(res) {
+					if( StatusTimestamp>timestamp )
+						return;
+					StatusTimestamp = timestamp;
+					res = JSON.parse(res);
+					if( res.samples && res.samples[0] && res.samples[0][1]
+							&& window.GameStatus()!='playing' && res.samples[0][1][0]=='playing' )
+						$('#start-fight').click();
+				},
+				error: function(err, st) {
+					console.log('=== pull error ===');
+					console.log(err);
+					console.log(st);
+				},
+				dataType: 'text'
+			});
+		}
+
+		function pullMonsterAction(timestamp) {
+			$.ajax({
+				type: "GET",
+				url: '/' + IoTtalk_ID + '/' + FeaturesMonsterAction,
+				success: function(res) {
+					if( MonsterTimestamp>timestamp )
+						return;
+					MonsterTimestamp = timestamp;
+					res = JSON.parse(res);
+					if( res.samples && res.samples[0] && res.samples[0][1] ) {
+						MonsterForce[0] = res.samples[0][1][0];				
+						MonsterForce[1] = res.samples[0][1][1];
+					}
+				},
+				error: function(err, st) {
+					console.log('=== pull error ===');
+					console.log(err);
+					console.log(st);
+				},
+				dataType: 'text'
+			});
+		}
+
+		function pullHeroAction(timestamp) {
+			$.ajax({
+				type: "GET",
+				url: '/' + IoTtalk_ID + '/' + FeaturesHeroAction,
+				success: function(res) {
+					if( HeroTimestamp>timestamp )
+						return;
+					HeroTimestamp = timestamp;
+					res = JSON.parse(res);
+					if( res.samples && res.samples[0] && res.samples[0][1] ) {
+						HeroForce[0] = res.samples[0][1][0];				
+						HeroForce[1] = res.samples[0][1][1];
+					}
+				},
+				error: function(err, st) {
+					console.log('=== pull error ===');
+					console.log(err);
+					console.log(st);
+				},
+				dataType: 'text'
+			});
+		}
+
+		function pushGameStatus() {
+			var data = packInfo();
+			$.ajax({
+				type: "PUT",
+				url: '/' + IoTtalk_ID + '/' + FeaturesStatus,
+				contentType: "application/json; charset=utf-8",
+				data: JSON.stringify({'data': data}),
+				success: function(res) {
+				},
+				error: function(err, st) {
+					console.log('=== push error ===');
+					console.log(err);
+					console.log(st);
+				},
+				dataType: 'text'
+			});
+		}
+
+		function pushFinal() {
+			var gameSt = arguments[0] || window.GameStatus();
+			$.ajax({
+				type: "PUT",
+				url: '/' + IoTtalk_ID + '/' + FeaturesRoom,
+				contentType: "application/json; charset=utf-8",
+				data: JSON.stringify({'data': [gameSt]}),
+				success: function(res) {
+				},
+				error: function(err, st) {
+					console.log('=== push error ===');
+					console.log(err);
+					console.log(st);
+				},
+				dataType: 'text'
+			});
+		}
+
+
+
+
+		// Main AI fighting logic
+		register();
+
+		var lastPullTimestamp = null;
+		var pullDataInterval = 1000 / 30;
+
+		// Finite state machine's state
+		function Playing(timestamp) {
+			if( lastPullTimestamp===null )
+				lastPullTimestamp = timestamp;
+			var edge = window.GameStatus();
+			if( edge!='playing' ) {
+				pushFinal();
+				requestAnimationFrame(BroadcastingResult);
+				console.log('BroadcastingResult');
+				return;
+			}
+			if( timestamp-lastPullTimestamp > pullDataInterval ) {
+				lastPullTimestamp = timestamp;
+				pushGameStatus();
+				pullHeroAction(timestamp);
+				pullMonsterAction(timestamp);
+			}
+			Hero.applyForce(HeroForce);
+			Monster.applyForce(MonsterForce);
+			requestAnimationFrame(Playing);
+		}
+		function BroadcastingResult(timestamp) {
+			var edge = window.GameStatus();
+			if( edge!='playing' ) {
+				$('#fake-start-fight').css('display', 'block');
+				requestAnimationFrame(WaitingStart);
+				console.log('WaitingStart');
+				return;
+			}
+			if( timestamp-lastPullTimestamp > pullDataInterval ) {
+				lastPullTimestamp = timestamp;
+				pullStatus(timestamp);
+			}
+			requestAnimationFrame(BroadcastingResult);
+		}
+		function WaitingStart(timestamp) {
+			var edge = window.GameStatus();
+			if( edge=='playing' ) {
+				requestAnimationFrame(Playing);
+				console.log('Playing');
+				return;
+			}
+			if( timestamp-lastPullTimestamp > pullDataInterval ) {
+				lastPullTimestamp = timestamp;
+				pullStatus(timestamp);
+			}
+			requestAnimationFrame(WaitingStart);
+		}
+
+		// Finite state machine's start vertex
+		requestAnimationFrame(WaitingStart);
+
+
+		// Rebinding event
+		$('#fake-start-fight').click(function() {
+			window.ResetPlayerPosition();
+			window.Feedback.show('Synchronizing...');
+			pushGameStatus();
+			pushFinal('playing');
+			$('#fake-start-fight').css('display', 'none');
+		});
+	</script>
+
+</body>
+</html>
