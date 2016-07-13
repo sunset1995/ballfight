@@ -4,6 +4,7 @@ socketIO = SocketIO('localhost', 8000, LoggingNamespace)
 callbacks = []
 
 def register(role='hero'):
+    me_role = role
     socketIO.emit('register', role)
 
 def applyForce(f=[0, 0]):
@@ -14,8 +15,8 @@ def reactAsStateChange(callback):
         return 'callback must be a function'
     callbacks.append(callback)
 
-def __statusChangeHandler(status):
+def __statusChangeHandler(me, enemy, arena_r):
     for callback in callbacks:
-        callback(status)
+        callback(me, enemy, arena_r)
 
 socketIO.on('statusChange', __statusChangeHandler)
