@@ -1,4 +1,4 @@
-from gameStatus import gameStatus
+from components.gameStatus import GameStatus
 import json
 
 import os
@@ -12,7 +12,7 @@ sio = socketio.Server()
 app = Flask(__name__)
 app.debug = False
 
-bfStatus = gameStatus()
+bfStatus = GameStatus()
 
 @app.route('/<path:path>')
 def web_serve(path = 'index.html'):
@@ -22,11 +22,7 @@ def web_serve(path = 'index.html'):
 def connect(sid, env):
     print(sid, 'join')
     bfStatus.sid[sid] = ''
-
-@sio.on('disconnect')
-def disconnect(sid):
-    print(sid, 'exist')
-    bfStatus.sid.pop(sid)
+    sio.emit('memberChange', bfStatus.sid)
 
 @sio.on('register')
 def register(sid, role):
@@ -37,6 +33,10 @@ def register(sid, role):
         bfStatus.sid[sid] = 'arena'
     else:
         bfStatus.sid[sid] = 'hero'
+
+@sio.on('start')
+def startGame(sid):
+    sio.emit('startGame')
 
 @sio.on('updateStatus')
 def updateStatus(sid, data):

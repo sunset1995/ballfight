@@ -1,7 +1,17 @@
 import math
-import time
 
 
+# Define self used math function
+def floorEPS(lf):
+    return int(lf*100) / 100
+
+def friction(vx=0, vy=0, k=1):
+    vx = floorEPS(-vx*k)
+    vy = floorEPS(-vy*k)
+    return [vx, vy]
+
+
+# Define public function and class
 def BallCollision(A, B):
     base = [A.x-B.x, A.y-B.y]
     vLen = math.sqrt(base[0]**2 + base[1]**2)
@@ -25,14 +35,7 @@ def BallDistance(A, B):
 class Ball(object):
 
 
-    # Define self used math function
-    def __friction(self, vx=0, vy=0, k=1):
-        return [-vx*k, -vy*k]
-
-    
     # Define self used shared variable
-    __fps = 40
-    __duration = 1 / __fps
     __maxspeed = 700
     __maxforce = 10000
 
@@ -40,7 +43,16 @@ class Ball(object):
     ## Define self used member
     def __init__(self):
         self.reset()
-    
+
+    def __norm__(self):
+        self.x = floorEPS(self.x)
+        self.y = floorEPS(self.y)
+        self.vx = floorEPS(self.vx)
+        self.vy = floorEPS(self.vy)
+        self.ax = floorEPS(self.ax)
+        self.ay = floorEPS(self.ay)
+        self.fx = floorEPS(self.fx)
+        self.fy = floorEPS(self.fy)
 
     # Define public method
     def reset(self, x=0, y=0):
@@ -63,19 +75,19 @@ class Ball(object):
         self.fx = f[0]
         self.fy = f[1]
 
-    def next(self):
-        self.x += (self.vx + self.ax*self.__duration/2) * self.__duration
-        self.y += (self.vy + self.ay*self.__duration/2) * self.__duration
+    def next(self, duration):
+        self.x += (self.vx + self.ax*duration/2) * duration
+        self.y += (self.vy + self.ay*duration/2) * duration
 
-        self.vx += self.ax*self.__duration
-        self.vy += self.ay*self.__duration
+        self.vx += self.ax*duration
+        self.vy += self.ay*duration
         vLen = math.sqrt(self.vx**2 + self.vy**2)
         if vLen>self.__maxspeed:
             self.vx *= self.__maxspeed/vLen
             self.vy *= self.__maxspeed/vLen
 
-        fr = self.__friction(self.vx, self.vy, self.k)
+        fr = friction(self.vx, self.vy, self.k)
         self.ax = (self.fx + fr[0]) / self.m
         self.ay = (self.fy + fr[1]) / self.m
 
-        print([self.x, self.y])
+        self.__norm__()
