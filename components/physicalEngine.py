@@ -15,6 +15,8 @@ def friction(vx=0, vy=0, k=1):
 def BallCollision(A, B):
     base = [A.x-B.x, A.y-B.y]
     vLen = math.sqrt(base[0]**2 + base[1]**2)
+    if vLen==0:
+        return
     base[0] /= vLen
     base[1] /= vLen
     pA = A.vx*base[0] + A.vy*base[1]

@@ -1,14 +1,14 @@
 class GameStatus():
     
     # (hero)lose/win/playing/first
-    game_status = {
+    gameStatus = {
         # [x, y, vx, vy]
         'hero': [0, -250, 0, 0],
         'monster': [0, 250, 0, 0],
         'arena': 700,
         'result': 'first'
     }
-    role_action = {
+    roleAction = {
         # [fx, fy]
         'hero': [0, 0],
         'monster': [0, 0]
@@ -21,14 +21,14 @@ class GameStatus():
         pass
 
     def reset(self):
-        self.game_status = {
+        self.gameStatus = {
             # [x, y, vx, vy]
             'hero': [0, -250, 0, 0],
             'monster': [0, 250, 0, 0],
             'arena': 700,
             'result': 'first'
         }
-        self.role_action = {
+        self.roleAction = {
             # [fx, fy]
             'hero': [0, 0],
             'monster': [0, 0]
