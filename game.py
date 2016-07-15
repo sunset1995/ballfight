@@ -3,7 +3,8 @@ import math
 import time
 import sys
 
-from components.gameStatus import GameStatus
+from agent.loser import reaction as heroAction
+from agent.softer import reaction as monsterAction
 from components import physicalEngine
 
 import os
@@ -24,11 +25,13 @@ app.debug = False
 __fps = 40
 __duration = 1 / __fps
 
-status = GameStatus()
-gameStatus = status.gameStatus
-roleAction = status.roleAction
+# gamer
 hero = physicalEngine.Ball()
 monster = physicalEngine.Ball()
+arena = 700
+
+# first/playing/lose/win
+result = 'first'
 
 
 
@@ -38,17 +41,25 @@ monster = physicalEngine.Ball()
 def web_serve(path = 'index.html'):
     return send_from_directory('static', path)
 
+@sio.on('connection')
+def connection(sid):
+    print("%s join" % sid)
+
+@sio.on('disconnection')
+def disconnection(sid):
+    print("%s exit" % sid)
+
 @sio.on('startGame')
 def startGame(sid):
-    global gameStatus
     global hero
     global monster
-    if gameStatus['result'] == 'playing':
+    global result
+    global arena
+    if result == 'playing':
         return
-    gameStatus['hero'] = [0, 0]
-    gameStatus['monster'] = [0, 0]
-    gameStatus['arena'] = 700
-    gameStatus['result'] = 'playing'
+    print('start game')
+    result = 'playing'
+    arena = 700
     hero.reset()
     monster.reset()
 
@@ -56,7 +67,7 @@ def startGame(sid):
 
 
 def fallout(ball):
-    return math.sqrt(ball.x**2 + ball.y**2) > gameStatus['arena'] + 25
+    return math.sqrt(ball.x**2 + ball.y**2) > arena + 25
 
 def isCollision(ballA, ballB):
     return physicalEngine.BallDistance(hero, monster) < 50
@@ -64,26 +75,37 @@ def isCollision(ballA, ballB):
 def phase():
 
 
-    global gameStatus
+    global result
+    global arena
 
+
+    if result == 'playing':
+        heroInfo = [hero.x, hero.y, hero.vx, hero.vy]
+        monsterInfo = [monster.x, monster.y, monster.vx, monster.vy]
+
+        heroAction(heroInfo, monsterInfo, arena)
+        monsterAction(monsterInfo, heroInfo, arena)
 
     hero.next(__duration)
     monster.next(__duration)
 
+    if isCollision(hero, monster):
+        physicalEngine.BallCollision(hero, monster)
 
-    if gameStatus['result'] == 'playing':
-        if isCollision(hero, monster):
-            physicalEngine.BallCollision(hero, monster)
-
-        gameStatus['arena'] -= __duration
+    if result == 'playing':
+        arena -= __duration
 
         if fallout(hero):
-            gameStatus['result'] = 'lose'
+            result = 'lose'
         elif fallout(monster):
-            gameStatus['result'] = 'win'
+            result = 'win'
 
 
-    sio.emit('updateStatus', gameStatus)
+    sio.emit('statusChange', {
+        'hero': [hero.x, hero.y, hero.vx, hero.vy],
+        'monster': [monster.x, monster.y, monster.vx, monster.vy],
+        'arena': arena
+        })
 
 
 
@@ -92,9 +114,9 @@ if __name__ == '__main__':
     app = socketio.Middleware(sio, app)
     eventlet.wsgi.server(eventlet.listen(('', 8000)), app, log_output=False, debug=False)
 
-    try:
-        while True:
-            phase()
-            time.sleep(__duration)
-    except KeyboardInterrupt:
-        sys.exit(0)
+    #try:
+    #    while True:
+    #        phase()
+    #        time.sleep(__duration)
+    #except KeyboardInterrupt:
+    #    sys.exit(0)
