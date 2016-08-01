@@ -4,6 +4,19 @@ from autobahn.asyncio.websocket import WebSocketClientFactory
 
 
 role = 'hero'
+keys = {
+    'my': {
+        'position': 'heroPosition',
+        'speed': 'heroSpeed',
+    },
+    'enemy': {
+        'position': 'monsterPosition',
+        'speed': 'monsterSpeed',
+    },
+    'arena': {
+        'radius': 'arenaRadius',
+    },
+}
 agent = lambda: [0, 0]
 data = dict()
 
@@ -18,6 +31,9 @@ class BallfightClientProtocal(WebSocketClientProtocol):
                 'force': [0, 0],
             },
         }
+        global keys
+        if role == 'monster':
+            keys['my'], keys['enemy'] = keys['enemy'], keys['my']
 
     def onOpen(self):
         self.handshakeDone = True
@@ -37,35 +53,38 @@ class BallfightClientProtocal(WebSocketClientProtocol):
         self.msg['data']['force'] = agent()
         self.sendMessage(json.dumps(self.msg).encode('utf8'))
 
+    def onClose(self, wasClean, code, reason):
+        print("Connection closed unexpected %s" % (reason))
 
 
 
-def getHeroPosition():
-    if 'heroPosition' in data:
-        return data['heroPosition']
+
+def getMyPosition():
+    if keys['my']['position'] in data:
+        return data[keys['my']['position']]
     return [0, 0]
 
-def getHeroSpeed():
-    if 'heroSpeed' in data:
-        return data['heroSpeed']
+def getMySpeed():
+    if keys['my']['speed'] in data:
+        return data[keys['my']['speed']]
     return [0, 0]
 
-def getMonsterPosition():
-    if 'monsterPosition' in data:
-        return data['monsterPosition']
+def getEnemyPosition():
+    if keys['enemy']['position'] in data:
+        return data[keys['enemy']['position']]
     return [0, 0]
 
-def getMonsterSpeed():
-    if 'monsterSpeed' in data:
-        return data['monsterSpeed']
+def getEnemySpeed():
+    if keys['enemy']['speed'] in data:
+        return data[keys['enemy']['speed']]
     return [0, 0]
 
 def getArenaRadius():
-    if 'arenaRadius' in data:
-        return data['arenaRadius']
+    if keys['arena']['radius'] in data:
+        return data[keys['arena']['radius']]
     return 350
 
-def play(ip, port, r='hero', a=lambda: [0,0]):
+def play(ip, port, a=lambda: [0,0], r='hero'):
     try:
         import asyncio
     except ImportError:
@@ -76,7 +95,7 @@ def play(ip, port, r='hero', a=lambda: [0,0]):
     role = r
     agent = a
 
-    factory = WebSocketClientFactory(u'ws://%s:%s' % (ip, port))
+    factory = WebSocketClientFactory('ws://%s:%s' % (ip, port))
     factory.protocol = BallfightClientProtocal
 
     try:
