@@ -42,8 +42,12 @@
         })();
     </script>
     <script>
+
+        var bginfo = document.getElementById('bg-info');
+
         var sock = null;
         var url = 'ws://' + location.hostname + ':8080';
+        var connecting = true;
         if ("WebSocket" in window)
             sock = new WebSocket(url);
         else if ("MozWebSocket" in window)
@@ -55,6 +59,8 @@
         if( sock ) {
             sock.onopen = function() {
                 console.log('Connect success');
+                bginfo.innerHTML = 'Connect success';
+                connecting = false;
                 sock.send(JSON.stringify({
                     'action': 'setrole',
                     'data': 'gsensor',
@@ -66,26 +72,6 @@
         }
 
 
-
-        // Init
-        socket.on('connect', function() {
-            bginfo.innerHTML = ''
-            connecting = false;
-            socket.emit('set name', ID);
-        });
-        socket.on('reconnect', function() {
-            bginfo.innerHTML = '';
-            connecting = false;
-            socket.emit('set name', ID);
-        })
-        socket.on('disconnect', function() {
-            bginfo.innerHTML = 'Disconnect';
-            connecting = true;
-        });
-        socket.on('reconnect_attempt', function() {
-            bginfo.innerHTML = 'Reconnecting to server...';
-            connecting = true;
-        });
 
 
         // g-sensor
