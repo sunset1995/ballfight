@@ -116,6 +116,6 @@ listenWS(factory)
 
 webdir = File("static")
 web = Site(webdir)
-reactor.listenTCP(3000, web)
+reactor.listenTCP(8081, web)
 
 reactor.run()
