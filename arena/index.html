@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Stupid AI</title>
+</head>
+<body>
+    
+    <div id="feedback-info">
+        <strong></strong>
+    </div>
+
+    <button id="start-fight">Fight</button>
+
+    <div id="arena"></div>
+    <div id="hero"></div>
+    <div id="monster"></div>
+
+    <link rel="stylesheet" type="text/css" href="css/physicalEngine.css">
+    <script type="text/javascript" src="js/requestAnimationFramePatch.js"></script>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/physicalEngine.js"></script>
+    <script type="text/javascript" src="js/gameLogic.js"></script>
+
+    <script type="text/javascript">
+        
+        var sock = null;
+        var url = 'ws://localhost:8080';
+        if ("WebSocket" in window)
+            sock = new WebSocket(url);
+        else if ("MozWebSocket" in window)
+            sock = new MozWebSocket(url);
+        else
+            console.log('web socket not supported');
+
+
+        if( sock ) {
+            sock.onopen = function() {
+                console.log('Connect success');
+                sock.send(JSON.stringify({
+                    'action': 'setrole',
+                    'data': 'arena',
+                }));
+            }
+            sock.onclose = function() {
+                console.log('Connect closed');
+            }
+            sock.onmessage = function(e) {
+                var res = JSON.parse(e.data || '');
+                if( res.role === 'hero' )
+                    Hero.applyForce(res.force);
+                else if( res.role === 'monster' )
+                    Monster.applyForce(res.force);
+            }
+        }
+
+
+        var lastTimestamp = null;
+        var interval = 1000 / 1;
+
+        function packInfo() {
+            return {
+                'heroPosition': [Hero.x-Arena.x(), Hero.y-Arena.y()],
+                'heroSpeed': [Hero.vx, Hero.vy],
+                'monsterPosition': [Monster.x-Arena.x(), Monster.y-Arena.y()],
+                'monsterSpeed': [Monster.vx, Monster.vy],
+                'arenaRadius': Arena.r(),
+            };
+        }
+
+        function state_playing(timestamp) {
+            if( timestamp - lastTimestamp > interval ) {
+                sock.send(JSON.stringify({
+                    'action': 'toPlayer',
+                    'data': packInfo(),
+                }));
+                lastTimestamp = timestamp;
+            }
+
+            if( window.GameStatus() !== 'playing' )
+                requestAnimationFrame(state_waiting);
+            else 
+                requestAnimationFrame(state_playing);
+        }
+
+        function state_waiting(timestamp) {
+            lastTimestamp = timestamp;
+            if( window.GameStatus() === 'playing' )
+                requestAnimationFrame(state_playing);
+            else
+                requestAnimationFrame(state_waiting);
+        }
+        
+        requestAnimationFrame(state_waiting);
+    </script>
+
+</body>
+</html>
