@@ -8,7 +8,7 @@ var terminalSpeed = 700;
 
 // Define self used function
 function floorEPS(lf) {
-	return Math.floor(lf*1000000) / 1000000;
+	return Math.floor(lf*1000) / 1000;
 }
 function dot(v1, v2) {
 	return v1[0]*v2[0] + v1[1]*v2[1];
@@ -50,17 +50,24 @@ var Ball = function() {
 		that.x += (that.vx + that.ax * timeElapse / 2) * timeElapse;
 		that.y += (that.vy + that.ay * timeElapse / 2) * timeElapse;
 
-		that.vx = floorEPS(that.vx + that.ax * timeElapse);
-		that.vy = floorEPS(that.vy + that.ay * timeElapse);
+		that.vx = that.vx + that.ax * timeElapse;
+		that.vy = that.vy + that.ay * timeElapse;
 		var len = vectorLength([that.vx, that.vy]);
 		if( len > that.terminalSpeed ) {
-			that.vx = floorEPS(that.vx * that.terminalSpeed / len);
-			that.vy = floorEPS(that.vy * that.terminalSpeed / len);
+			that.vx = that.vx * that.terminalSpeed / len;
+			that.vy = that.vy * that.terminalSpeed / len;
 		}
 
 		var fr = friction([that.vx, that.vy], that.k);
-		that.ax = floorEPS((that.fx + fr[0]) / that.m);
-		that.ay = floorEPS((that.fy + fr[1]) / that.m);
+		that.ax = (that.fx + fr[0]) / that.m;
+		that.ay = (that.fy + fr[1]) / that.m;
+
+		that.x = floorEPS(that.x);
+		that.y = floorEPS(that.y);
+		that.vx = floorEPS(that.vx);
+		that.vy = floorEPS(that.vy);
+		that.ax = floorEPS(that.ax);
+		that.ay = floorEPS(that.ay);
 
 		requestAnimationFrame(next);
 	}

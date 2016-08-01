@@ -25,7 +25,7 @@
     <script type="text/javascript">
         
         var sock = null;
-        var url = 'ws://localhost:8080';
+        var url = 'ws://' + location.hostname + ':8080';
         if ("WebSocket" in window)
             sock = new WebSocket(url);
         else if ("MozWebSocket" in window)
