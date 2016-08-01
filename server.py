@@ -22,6 +22,8 @@ class BallfightServerProtocal(WebSocketServerProtocol):
             self.factory.toPlayer(msg)
         elif action == 'toArena':
             self.factory.toArena(msg)
+        elif action == 'toHero':
+            self.factory.toHero(msg)
         elif action == 'setrole':
             self.role = data
             self.factory.setrole(self, data)
@@ -59,6 +61,7 @@ class BallfightSeverFactory(WebSocketServerFactory):
         self.hero = None
         self.monster = None
         self.arena = None
+        self.gsensor = None
 
         self.__show__()
 
@@ -67,7 +70,8 @@ class BallfightSeverFactory(WebSocketServerFactory):
         hS = '\033[92m' if self.hero else '\033[91m'
         mS = '\033[92m' if self.monster else '\033[91m'
         aS = '\033[92m' if self.arena else '\033[91m'
-        print('%s hero \033[0m | %s monster \033[0m | %s arena \033[0m' % (hS, mS, aS), end='\r', flush=True)
+        gS = '\033[92m' if self.gsensor else '\033[91m'
+        print('%s hero \033[0m | %s monster \033[0m | %s arena \033[0m | %s gsensor \033[0m ' % (hS, mS, aS, gS), end='\r')
 
 
     def toPlayer(self, msg):
@@ -83,6 +87,11 @@ class BallfightSeverFactory(WebSocketServerFactory):
             self.arena.sendMessage(msg)
 
 
+    def toHero(self, msg):
+        if self.hero:
+            self.hero.sendMessage(msg)
+
+
     def setrole(self, client, role):
         if role == 'hero':
             self.hero = client
@@ -90,6 +99,8 @@ class BallfightSeverFactory(WebSocketServerFactory):
             self.monster = client
         elif role == 'arena':
             self.arena = client
+        elif role == 'gsensor':
+            self.gsensor = client
 
         self.__show__()
 
@@ -104,6 +115,9 @@ class BallfightSeverFactory(WebSocketServerFactory):
         elif role == 'arena':
             if self.arena == client:
                 self.arena = None
+        elif role == 'gsensor':
+            if self.gsensor == client:
+                self.gsensor = None
 
         self.__show__()
 
