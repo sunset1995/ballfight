@@ -18,6 +18,11 @@ keys = {
     'arena': {
         'radius': 'arenaRadius',
     },
+    'gsensor': {
+        'x': 'gsensorX',
+        'y': 'gsensorY',
+        'z': 'gsensorZ',
+    }
 }
 agent = lambda: [0, 0]
 data = dict()
@@ -86,6 +91,15 @@ def getArenaRadius():
     if keys['arena']['radius'] in data:
         return data[keys['arena']['radius']]
     return 350
+
+def getGsensor():
+    if keys['gsensor']['x'] in data:
+        return [
+            data[keys['gsensor']['x']],
+            data[keys['gsensor']['y']],
+            data[keys['gsensor']['z']]
+        ]
+    return [0, 0, 0]
 
 def play(ip, port, a=lambda: [0,0], r='hero'):
     
