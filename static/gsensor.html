@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gravity sensor</title>
+
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        html, body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #333;
+            color: white;
+        }
+        .mid-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mid-center">
+        <h1 id="bg-info">Connecting to server...</h1>
+    </div>
+
+    
+    <script type="text/javascript">
+        (function() {
+            var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                                        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+            window.requestAnimationFrame = requestAnimationFrame;
+        })();
+    </script>
+    <script>
+        var sock = null;
+        var url = 'ws://' + location.hostname + ':8080';
+        if ("WebSocket" in window)
+            sock = new WebSocket(url);
+        else if ("MozWebSocket" in window)
+            sock = new MozWebSocket(url);
+        else
+            console.log('web socket not supported');
+
+
+        if( sock ) {
+            sock.onopen = function() {
+                console.log('Connect success');
+                sock.send(JSON.stringify({
+                    'action': 'setrole',
+                    'data': 'gsensor',
+                }));
+            }
+            sock.onclose = function() {
+                console.log('Connect closed');
+            }
+        }
+
+
+
+        // Init
+        socket.on('connect', function() {
+            bginfo.innerHTML = ''
+            connecting = false;
+            socket.emit('set name', ID);
+        });
+        socket.on('reconnect', function() {
+            bginfo.innerHTML = '';
+            connecting = false;
+            socket.emit('set name', ID);
+        })
+        socket.on('disconnect', function() {
+            bginfo.innerHTML = 'Disconnect';
+            connecting = true;
+        });
+        socket.on('reconnect_attempt', function() {
+            bginfo.innerHTML = 'Reconnecting to server...';
+            connecting = true;
+        });
+
+
+        // g-sensor
+        var info = {
+            gsensorX: 0,
+            gsensorY: 0,
+            gsensorZ: 0,
+        };
+        window.ondevicemotion = function(event) {
+            info.gsensorX = event.accelerationIncludingGravity.x || 0;  
+            info.gsensorY = event.accelerationIncludingGravity.y || 0;
+            info.gsensorZ = event.accelerationIncludingGravity.z || 0;
+
+            info.gsensorX = Math.floor(info.gsensorX*1000) / 1000;
+            info.gsensorY = Math.floor(info.gsensorY*1000) / 1000;
+            info.gsensorZ = Math.floor(info.gsensorZ*1000) / 1000;
+        }
+
+
+        // sender
+        var senderClousure = function() {
+            var fps = 30;
+            var interval = 1000 / fps;
+            
+            var lastTimestamp = null;
+            var requestID = null;
+            function sender(timestamp) {
+                if( lastTimestamp===null )
+                    lastTimestamp = timestamp;
+
+                if( timestamp-lastTimestamp > interval ) {
+                    if( !connecting ) {
+                        sock.send(JSON.stringify({
+                            'action': 'toHero',
+                            'data': info,
+                        }));
+                        bginfo.innerHTML = JSON.stringify(info, null, '\t')
+                    }
+                    lastTimestamp = timestamp;
+                }
+                requestID = requestAnimationFrame(sender);
+            }
+            
+            requestID = requestAnimationFrame(sender);
+            return function() {
+                return requestID;
+            };
+        }();
+    </script>
+</body>
+</html>
