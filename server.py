@@ -6,6 +6,7 @@ from autobahn.asyncio.websocket import WebSocketServerFactory
 class BallfightServerProtocal(WebSocketServerProtocol):
 
     def __init__(self):
+        WebSocketServerProtocol.__init__(self)
         self.handshakeDone = False
         self.role = None
 
@@ -38,13 +39,11 @@ class BallfightServerProtocal(WebSocketServerProtocol):
 
         if req and 'action' in req and 'data' in req:
             self.dispatch(req['action'], req['data'])
-        else:
-            print('req format error')
 
 
-    def connectionLost(self, reason):
-        WebSocketServerProtocol.connectionLost(self, reason)
+    def onClose(self, wasClean, code, reason):
         self.factory.unregister(self, self.role)
+        WebSocketServerProtocol.onClose(self, wasClean, code, reason)
 
 
 
@@ -57,12 +56,17 @@ class BallfightSeverFactory(WebSocketServerFactory):
         self.monster = None
         self.arena = None
 
+        self.__show__()
+
+
+    def __show__(self):
+        hS = '\033[92m' if self.hero else '\033[91m'
+        mS = '\033[92m' if self.monster else '\033[91m'
+        aS = '\033[92m' if self.arena else '\033[91m'
+        print('%s hero \033[0m | %s monster \033[0m | %s arena \033[0m' % (hS, mS, aS), end='\r', flush=True)
+
 
     def toPlayer(self, msg):
-        print('toPlayer')
-        print(msg)
-        print(self.hero)
-        
         if self.hero:
             self.hero.sendMessage(msg)
 
@@ -71,24 +75,19 @@ class BallfightSeverFactory(WebSocketServerFactory):
 
 
     def toArena(self, msg):
-        print('toArena')
-        print(msg)
         if self.arena:
             self.arena.sendMessage(msg)
 
 
     def setrole(self, client, role):
-        print(role)
-        print(type(role))
         if role == 'hero':
-            print('set as hero')
             self.hero = client
         elif role == 'monster':
-            print('set as moster')
             self.monster = client
         elif role == 'arena':
-            print('set as arena')
             self.arena = client
+
+        self.__show__()
 
 
     def unregister(self, client, role):
@@ -101,6 +100,8 @@ class BallfightSeverFactory(WebSocketServerFactory):
         elif role == 'arena':
             if self.arena == client:
                 self.arena = None
+
+        self.__show__()
 
 
 
