@@ -1,5 +1,7 @@
 import json
 from twisted.internet import reactor
+from twisted.web.server import Site
+from twisted.web.static import File
 from autobahn.twisted.websocket import WebSocketServerFactory
 from autobahn.twisted.websocket import WebSocketServerProtocol
 from autobahn.twisted.websocket import listenWS
@@ -111,5 +113,9 @@ class BallfightSeverFactory(WebSocketServerFactory):
 factory = BallfightSeverFactory("ws://127.0.0.1:8080")
 factory.protocol = BallfightServerProtocal
 listenWS(factory)
+
+webdir = File("static")
+web = Site(webdir)
+reactor.listenTCP(3000, web)
 
 reactor.run()
