@@ -1,6 +1,8 @@
 import json
-from autobahn.asyncio.websocket import WebSocketClientProtocol
-from autobahn.asyncio.websocket import WebSocketClientFactory
+from twisted.internet import reactor
+from autobahn.twisted.websocket import WebSocketClientFactory
+from autobahn.twisted.websocket import WebSocketClientProtocol
+from autobahn.twisted.websocket import connectWS
 
 
 role = 'hero'
@@ -23,6 +25,7 @@ data = dict()
 class BallfightClientProtocal(WebSocketClientProtocol):
 
     def __init__(self):
+        WebSocketClientProtocol.__init__(self)
         self.handshakeDone = False
         self.msg = {
             'action': 'toArena',
@@ -54,7 +57,7 @@ class BallfightClientProtocal(WebSocketClientProtocol):
         self.sendMessage(json.dumps(self.msg).encode('utf8'))
 
     def onClose(self, wasClean, code, reason):
-        print("Connection closed unexpected %s" % (reason))
+        WebSocketClientProtocol.onClose(self, wasClean, code, reason)
 
 
 
@@ -85,11 +88,7 @@ def getArenaRadius():
     return 350
 
 def play(ip, port, a=lambda: [0,0], r='hero'):
-    try:
-        import asyncio
-    except ImportError:
-        import trollius as asyncio
-
+    
     global role
     global agent
     role = r
@@ -97,13 +96,6 @@ def play(ip, port, a=lambda: [0,0], r='hero'):
 
     factory = WebSocketClientFactory('ws://%s:%s' % (ip, port))
     factory.protocol = BallfightClientProtocal
+    connectWS(factory)
 
-    try:
-        loop = asyncio.get_event_loop()
-        coro = loop.create_connection(factory, ip, port)
-        loop.run_until_complete(coro)
-        loop.run_forever()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        loop.close()
+    reactor.run()

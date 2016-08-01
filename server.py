@@ -1,6 +1,8 @@
 import json
-from autobahn.asyncio.websocket import WebSocketServerProtocol
-from autobahn.asyncio.websocket import WebSocketServerFactory
+from twisted.internet import reactor
+from autobahn.twisted.websocket import WebSocketServerFactory
+from autobahn.twisted.websocket import WebSocketServerProtocol
+from autobahn.twisted.websocket import listenWS
 
 
 class BallfightServerProtocal(WebSocketServerProtocol):
@@ -106,23 +108,8 @@ class BallfightSeverFactory(WebSocketServerFactory):
 
 
 
-try:
-    import asyncio
-except ImportError:
-    # Trollius >= 0.3 was renamed
-    import trollius as asyncio
-
 factory = BallfightSeverFactory("ws://127.0.0.1:8080")
 factory.protocol = BallfightServerProtocal
+listenWS(factory)
 
-loop = asyncio.get_event_loop()
-coro = loop.create_server(factory, '0.0.0.0', 8080)
-server = loop.run_until_complete(coro)
-
-try:
-    loop.run_forever()
-except KeyboardInterrupt:
-    pass
-finally:
-    server.close()
-    loop.close()
+reactor.run()
