@@ -64,6 +64,19 @@
                 else if( res.role === 'monster' )
                     Monster.applyForce(res.force);
             };
+
+            function checkSockAlive() {
+                if( !sock && $('#start-fight')[0].style.display !== 'none' ) {
+                    $('#start-fight')[0].style.display = 'none';
+                    window.Feedback.show('Connection closed, please press "ctrl + shift + R"');
+                }
+                requestAnimationFrame(checkSockAlive);
+            }
+            requestAnimationFrame(checkSockAlive);
+        }
+        else {
+            $('#start-fight')[0].style.display = 'none';
+            window.Feedback.show('Connection closed, please press "ctrl + shift + R"');
         }
 
 
