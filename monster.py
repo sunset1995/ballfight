@@ -12,4 +12,4 @@ def strategy():
     return reaction(myPos, mySpeed, enemyPos, enemySpeed, arenaR)
 
 
-api.play('127.0.0.1', 8080, strategy, 'monster')
+api.play('127.0.0.1', 8081, strategy, 'monster')

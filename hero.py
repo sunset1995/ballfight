@@ -1,5 +1,4 @@
 import api
-from agent.softer import reaction
 
 
 def strategy():
@@ -8,8 +7,9 @@ def strategy():
     enemyPos = api.getEnemyPosition()
     enemySpeed = api.getEnemySpeed()
     arenaR = api.getArenaRadius()
+    gsensor = api.getGsensor()
 
-    return reaction(myPos, mySpeed, enemyPos, enemySpeed, arenaR)
+    return [5000/(enemyPos[0]-myPos[0]), 5000/(enemyPos[1]-myPos[1])]
 
 
-api.play('127.0.0.1', 8080, strategy)
+api.play('127.0.0.1', 8081, strategy)
