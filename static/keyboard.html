@@ -150,6 +150,8 @@
                     f[0] /= Math.sqrt(2);
                     f[1] /= Math.sqrt(2);
                 }
+
+                Hero.applyForce(f);
             }
 
             requestAnimationFrame(checkKeyboardSignal);
