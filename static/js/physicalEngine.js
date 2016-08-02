@@ -4,7 +4,7 @@
 
 
 // Constant
-var terminalSpeed = 700;
+var terminalSpeed = 500;
 
 // Define self used function
 function floorEPS(lf) {
@@ -74,7 +74,7 @@ var Ball = function() {
 	requestAnimationFrame(next);
 }
 Ball.prototype.terminalSpeed = terminalSpeed;
-Ball.prototype.maxForce = 10000;
+Ball.prototype.maxForce = 5000;
 Ball.prototype.applyForce = function(force) {
 	if( !this.playing )
 		return;
