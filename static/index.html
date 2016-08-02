@@ -24,7 +24,6 @@
 
     <script type="text/javascript">
         
-        $('#start-fight')[0].style.display = 'none';
         window.Feedback.show('Connecting to server...');
 
         var sock = null;
@@ -48,7 +47,7 @@
                     'action': 'setrole',
                     'data': 'arena',
                 }));
-                $('#start-fight')[0].style.display = 'show';
+                $('#start-fight')[0].style.display = 'block';
                 window.Feedback.close();
             };
             sock.onclose = function() {

@@ -24,6 +24,9 @@ html, body {
 	color: rgb(133, 166, 177);
 	text-shadow: 2px 2px white;
 }
+#start-fight {
+	display: none;
+}
 #start-fight, .start-fight {
 	position: absolute;
 	font-size: 2em;
