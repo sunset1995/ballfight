@@ -145,7 +145,7 @@ function updateDOM() {
 // Work in each fream
 function judge() {
     if( gamePlaying && isGameOver() ) {
-        win = isFallout(monster);
+        win = !isFallout(hero);
         closeFight();
     }
 
