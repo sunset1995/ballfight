@@ -62,6 +62,7 @@ class BallfightClientProtocal(WebSocketClientProtocol):
         self.sendMessage(json.dumps(self.msg).encode('utf8'))
 
     def onClose(self, wasClean, code, reason):
+        print('Connection closed, please restart press "ctrl + c" to exit')
         WebSocketClientProtocol.onClose(self, wasClean, code, reason)
 
 

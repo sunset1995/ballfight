@@ -24,6 +24,9 @@
 
     <script type="text/javascript">
         
+        $('#start-fight')[0].style.display = 'none';
+        window.feedback.show('Connecting to server');
+
         var sock = null;
         var url = 'ws://' + location.hostname + ':8080';
 
@@ -45,14 +48,15 @@
                     'action': 'setrole',
                     'data': 'arena',
                 }));
+                $('#start-fight')[0].style.display = 'show';
+                window.feedback.close();
             };
             sock.onclose = function() {
                 console.log('Connect closed');
 
-                setTimeout(function(){
-                    console.log('Reconnect...');
-                    connectToServer();
-                }, 2500);
+                $('#start-fight')[0].style.display = 'none';
+                window.Feedback.show('Connection closed, please press "ctrl + shift + R"');
+                sock = false;
             };
             sock.onmessage = function(e) {
                 var res = JSON.parse(e.data || '');
@@ -167,6 +171,13 @@
         }
 
         requestAnimationFrame(checkKeyboardSignal);
+
+
+        // Binding
+        $('#start-fight').click(function(){
+            if( sock )
+                window.StartFight();
+        });
     </script>
 
 </body>

@@ -159,13 +159,10 @@ function judge() {
 requestAnimationFrame(judge);
 
 
-// Binding
-$('#start-fight').click(startFight);
-
-
 // export to outer world for temporory AI
 window.Feedback = feedback;
 window.ResetPlayerPosition = resetPlayerPosition;
+window.StartFight = startFight;
 
 window.Monster = monster;
 window.Hero = hero;
