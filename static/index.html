@@ -26,12 +26,16 @@
         
         var sock = null;
         var url = 'ws://' + location.hostname + ':8080';
-        if ("WebSocket" in window)
-            sock = new WebSocket(url);
-        else if ("MozWebSocket" in window)
-            sock = new MozWebSocket(url);
-        else
-            console.log('web socket not supported');
+        
+        function connectToServer() {
+            if ("WebSocket" in window)
+                sock = new WebSocket(url);
+            else if ("MozWebSocket" in window)
+                sock = new MozWebSocket(url);
+            else
+                console.log('web socket not supported');
+        }
+        connectToServer();
 
 
         if( sock ) {
@@ -41,17 +45,22 @@
                     'action': 'setrole',
                     'data': 'arena',
                 }));
-            }
+            };
             sock.onclose = function() {
                 console.log('Connect closed');
-            }
+
+                setTimeout(function(){
+                    console.log('Reconnect...');
+                    connectToServer();
+                }, 2500);
+            };
             sock.onmessage = function(e) {
                 var res = JSON.parse(e.data || '');
                 if( res.role === 'hero' )
                     Hero.applyForce(res.force);
                 else if( res.role === 'monster' )
                     Monster.applyForce(res.force);
-            }
+            };
         }
 
 
