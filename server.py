@@ -124,12 +124,12 @@ class BallfightSeverFactory(WebSocketServerFactory):
 
 
 
-factory = BallfightSeverFactory("ws://127.0.0.1:8080")
+factory = BallfightSeverFactory("ws://127.0.0.1:8081")
 factory.protocol = BallfightServerProtocal
 listenWS(factory)
 
 webdir = File("static")
 web = Site(webdir)
-reactor.listenTCP(8081, web)
+reactor.listenTCP(8080, web)
 
 reactor.run()
