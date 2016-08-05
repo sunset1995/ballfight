@@ -1,0 +1,23 @@
+{
+  "name": "ballfight-server",
+  "version": "1.0.0",
+  "description": "Game logic and physical engine",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sunset1995/snp.git"
+  },
+  "author": "sunset1995",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sunset1995/snp/issues"
+  },
+  "homepage": "https://github.com/sunset1995/snp#readme",
+  "dependencies": {
+    "autobahn": "^0.10.1",
+    "when": "^3.7.7"
+  }
+}
