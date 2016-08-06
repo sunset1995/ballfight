@@ -1,6 +1,7 @@
 // Init
 var autobahn = require('autobahn');
 var config = require('./config.js');
+var Agent = require('./agent.js');
 var Game = require('./game.js');
 
 var connection = new autobahn.Connection({
@@ -25,7 +26,7 @@ connection.onopen = function (session) {
         var data = args[1];
         if( action === 'start' ) {
             room[roomName].game.start();
-            playing.add(roomName);
+            room[roomName].mode = data;
         }
         else if( action === 'hero' )
             room[roomName].game.applyForceToHero(data);
@@ -49,6 +50,7 @@ connection.onopen = function (session) {
             // Create new room
             room[roomName] = {
                 game: new Game(),
+                mode: 'softer',
                 timestamp: Date.now(),
                 gsensor: [0, 0],
             };
@@ -72,18 +74,26 @@ connection.onopen = function (session) {
             var monster = now.game.monster;
             var radius = now.game.radius;
             var gsensor = now.gsensor;
+
+            var pack = {
+                'state': state,
+                'heroPos': [hero.x, hero.y],
+                'heroSpeed': [hero.vx, hero.vy],
+                'monsterPos': [monster.x, monster.y],
+                'monsterSpeed': [monster.vx, monster.vy],
+                'radius': radius,
+                'gsensor': gsensor,
+            };
+
+            if( state==='' && Agent[now.mode] ) {
+                var force = Agent[now.mode](pack.monsterPos, pack.monsterSpeed, pack.heroPos, pack.heroSpeed, pack.radius);
+                now.game.applyForceToMonster(force);
+            }
+
             now.game.next();
 
             if( now.game.checkUpdated() )
-                session.publish('server.'+roomName, [], {
-                    'state': state
-                    'heroPos': [hero.x, hero.y],
-                    'heroSpeed': [hero.vx, hero.vy],
-                    'monsterPos': [monster.x, monster.y],
-                    'monsterSpeed': [monster.vx, monster.vy],
-                    'radius': radius,
-                    'gsensor': gsensor,
-                });
+                session.publish('server.'+roomName, [], pack);
         });
 
         setTimeout(judge, config.interval);
