@@ -9,7 +9,10 @@ def strategy():
     arenaR = api.getArenaRadius()
     gsensor = api.getGsensor()
 
-    return [5000/(enemyPos[0]-myPos[0]), 5000/(enemyPos[1]-myPos[1])]
+    return [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]]
 
 
-api.play('wamp-router-sunset1995.c9users.io:8080', 'sunset', 'softer', strategy)
+api.setRoom('sunset')
+api.setMonster('softer')
+
+api.play(strategy, True)

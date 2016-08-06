@@ -1,16 +1,17 @@
 import sys
 import json
+from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.wamp import ApplicationSession
 from autobahn.twisted.wamp import ApplicationRunner
 
-
-roomName = ''
+url = 'ws://wamp-router-sunset1995.c9users.io:8080/ws'
+roomName = 'default'
+mode = 'softer'
 role = 'hero'
 agent = lambda: [0, 0]
-winHandler = lambda: 'Win'
-loseHandler = lambda: 'Lose'
 data = {
+    'state': 'first',
     'heroPos': [0, 0],
     'heroSpeed': [0, 0],
     'monsterPos': [0, 0],
@@ -18,8 +19,11 @@ data = {
     'radius': 0,
     'gsensor': [0, 0],
 }
+autoStart = False
 
 
+
+# Connector
 class BallfightConnector(ApplicationSession):
 
     @inlineCallbacks
@@ -28,20 +32,19 @@ class BallfightConnector(ApplicationSession):
 
         stateTopic = 'server.%s' % (roomName)
         actionTopic = 'player.%s' % (roomName)
-        lastState = ''
 
-        
+
+
         try:
             print("joining room %s..." % (roomName))
-            yield self.publish(u'joinRoom', roomName)
+            yield self.publish(u'joinRoom', roomName, autoStart)
             print("join room success")
         except Exception as e:
             print("fail to join room")
 
 
         def stateChangeHandler(**kargs):
-            nonlocal lastState
-            print(kargs)
+            global data
             data = kargs
 
             if 'state' not in kargs:
@@ -49,27 +52,15 @@ class BallfightConnector(ApplicationSession):
 
             if kargs['state'] == '':
                 force = agent()
-                if type(force)!='list' or len(force)!=2:
-                    print('Please give me [fx, fy]')
+                if not isinstance(force, list) or len(force)!=2:
+                    print('You should give me [fx, fy]')
                     print('But you give me ', force)
                 else:
                     self.publish(actionTopic, role, force)
-            elif kargs['state'] == 'heroWin' and lastState != 'heroWin':
-                if role=='hero':
-                    winHandler()
-                else:
-                    loseHandler()    
-            elif kargs['state'] == 'heroLose' and lastState != 'heroLose':
-                if role=='hero':
-                    loseHandler()
-                else:
-                    winHandler()
-
-            lastState = kargs['state']
-
+                    print('publish ', actionTopic, role, force)
 
         try:
-            print('subscribing %s' % stateTopic)
+            print('subscribing %s ...' % stateTopic)
             yield self.subscribe(stateChangeHandler, stateTopic)
             print("subscribe success")
         except Exception as e:
@@ -77,10 +68,17 @@ class BallfightConnector(ApplicationSession):
 
 
     def onDisconnect(self):
-        print("Connection closed")
+        print("Connection closed, press ctrl + c to exit")
+        if reactor.running:
+            reactor.stop()
 
 
 
+# Game info api
+def getState():
+    if 'state' in data:
+        return data['state']
+    return ''
 
 def getMyPosition():
     key = 'heroPos' if role == 'hero' else 'monsterPos'
@@ -117,21 +115,36 @@ def getGsensor():
     return [0, 0]
 
 
-def play(url, room, mode, strategy, win=lambda:'Win', lose=lambda:'Lose'):
-    
+
+# Connection api
+def setUrl(newurl):
+    global url
+    url = newurl
+
+def setRoom(rname):
     global roomName
+    roomName = rname
+
+def setMonster(monster):
+    global mode
     global role
+    mode = monster
+    role = 'hero'
+
+def setPVP(r):
+    global mode
+    global role
+    mode = 'PVP'
+    role = r
+
+def play(strategy, auto=False):
     global agent
-    global winHandler
-    global loseHandler
+    global autoStart
 
-    roomName = room
-    role = 'hero' if mode!='playMonster' else 'monster'
     agent = strategy
-    winHandler = win
-    loseHandler = lose
+    if auto:
+        autoStart = True
     
-
-    print("Connecting to server %s..." % (url))
-    runner = ApplicationRunner(url=u"ws://%s/ws" % (url), realm=u"ballfight")
+    print("Connecting to server %s ..." % (url))
+    runner = ApplicationRunner(url=url, realm=u"ballfight")
     runner.run(BallfightConnector)
