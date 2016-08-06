@@ -12,4 +12,4 @@ def strategy():
     return [5000/(enemyPos[0]-myPos[0]), 5000/(enemyPos[1]-myPos[1])]
 
 
-api.play('127.0.0.1', 8081, strategy)
+api.play('wamp-router-sunset1995.c9users.io:8080', 'sunset', 'softer', strategy)

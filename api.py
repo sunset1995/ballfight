@@ -1,116 +1,137 @@
+import sys
 import json
-from twisted.internet import reactor
-from autobahn.twisted.websocket import WebSocketClientFactory
-from autobahn.twisted.websocket import WebSocketClientProtocol
-from autobahn.twisted.websocket import connectWS
+from twisted.internet.defer import inlineCallbacks
+from autobahn.twisted.wamp import ApplicationSession
+from autobahn.twisted.wamp import ApplicationRunner
 
 
+roomName = ''
 role = 'hero'
-keys = {
-    'my': {
-        'position': 'heroPosition',
-        'speed': 'heroSpeed',
-    },
-    'enemy': {
-        'position': 'monsterPosition',
-        'speed': 'monsterSpeed',
-    },
-    'arena': {
-        'radius': 'arenaRadius',
-    },
-    'gsensor': {
-        'x': 'gsensorX',
-        'y': 'gsensorY',
-        'z': 'gsensorZ',
-    }
-}
 agent = lambda: [0, 0]
-data = dict()
+winHandler = lambda: 'Win'
+loseHandler = lambda: 'Lose'
+data = {
+    'heroPos': [0, 0],
+    'heroSpeed': [0, 0],
+    'monsterPos': [0, 0],
+    'monsterSpeed': [0, 0],
+    'radius': 0,
+    'gsensor': [0, 0],
+}
 
-class BallfightClientProtocal(WebSocketClientProtocol):
 
-    def __init__(self):
-        WebSocketClientProtocol.__init__(self)
-        self.handshakeDone = False
-        self.msg = {
-            'action': 'toArena',
-            'data': {
-                'role': role,
-                'force': [0, 0],
-            },
-        }
-        global keys
-        if role == 'monster':
-            keys['my'], keys['enemy'] = keys['enemy'], keys['my']
+class BallfightConnector(ApplicationSession):
 
-    def onOpen(self):
-        self.handshakeDone = True
-        self.sendMessage(json.dumps({
-            'action': 'setrole',
-            'data': role
-        }).encode('utf8'))
+    @inlineCallbacks
+    def onJoin(self, details):
+        print("Connection success")
 
-    def onMessage(self, payload, isBinary):
-        if isBinary or not self.handshakeDone:
-            return
+        stateTopic = 'server.%s' % (roomName)
+        actionTopic = 'player.%s' % (roomName)
+        lastState = ''
 
-        global data
-        res = json.loads(payload.decode('utf8'))
+        
+        try:
+            print("joining room %s..." % (roomName))
+            yield self.publish(u'joinRoom', roomName)
+            print("join room success")
+        except Exception as e:
+            print("fail to join room")
 
-        data.update(res)
-        self.msg['data']['force'] = agent()
-        self.sendMessage(json.dumps(self.msg).encode('utf8'))
 
-    def onClose(self, wasClean, code, reason):
-        print('Connection closed, please restart press "ctrl + c" to exit')
-        WebSocketClientProtocol.onClose(self, wasClean, code, reason)
+        def stateChangeHandler(**kargs):
+            nonlocal lastState
+            print(kargs)
+            data = kargs
+
+            if 'state' not in kargs:
+                return
+
+            if kargs['state'] == '':
+                force = agent()
+                if type(force)!='list' or len(force)!=2:
+                    print('Please give me [fx, fy]')
+                    print('But you give me ', force)
+                else:
+                    self.publish(actionTopic, role, force)
+            elif kargs['state'] == 'heroWin' and lastState != 'heroWin':
+                if role=='hero':
+                    winHandler()
+                else:
+                    loseHandler()    
+            elif kargs['state'] == 'heroLose' and lastState != 'heroLose':
+                if role=='hero':
+                    loseHandler()
+                else:
+                    winHandler()
+
+            lastState = kargs['state']
+
+
+        try:
+            print('subscribing %s' % stateTopic)
+            yield self.subscribe(stateChangeHandler, stateTopic)
+            print("subscribe success")
+        except Exception as e:
+            print("fail to subscribe")
+
+
+    def onDisconnect(self):
+        print("Connection closed")
 
 
 
 
 def getMyPosition():
-    if keys['my']['position'] in data:
-        return data[keys['my']['position']]
+    key = 'heroPos' if role == 'hero' else 'monsterPos'
+    if key in data:
+        return data[key]
     return [0, 0]
 
 def getMySpeed():
-    if keys['my']['speed'] in data:
-        return data[keys['my']['speed']]
+    key = 'heroSpeed' if role == 'hero' else 'monsterSpeed'
+    if key in data:
+        return data[key]
     return [0, 0]
 
 def getEnemyPosition():
-    if keys['enemy']['position'] in data:
-        return data[keys['enemy']['position']]
+    key = 'heroPos' if role != 'hero' else 'monsterPos'
+    if key in data:
+        return data[key]
     return [0, 0]
 
 def getEnemySpeed():
-    if keys['enemy']['speed'] in data:
-        return data[keys['enemy']['speed']]
+    key = 'heroSpeed' if role != 'hero' else 'monsterSpeed'
+    if key in data:
+        return data[key]
     return [0, 0]
 
 def getArenaRadius():
-    if keys['arena']['radius'] in data:
-        return data[keys['arena']['radius']]
+    if 'radius' in data:
+        return data['radius']
     return 350
 
 def getGsensor():
-    if keys['gsensor']['x'] in data:
-        return [
-            data[keys['gsensor']['x']],
-            data[keys['gsensor']['y']],
-            data[keys['gsensor']['z']]
-        ]
-    return [0, 0, 0]
+    if 'gsensor' in data:
+        return data['gsensor']
+    return [0, 0]
 
-def play(ip, port, a=lambda: [0,0], r='hero'):
+
+def play(url, room, mode, strategy, win=lambda:'Win', lose=lambda:'Lose'):
     
+    global roomName
     global role
     global agent
-    role = r
-    agent = a
+    global winHandler
+    global loseHandler
 
-    factory = WebSocketClientFactory('ws://%s:%s' % (ip, port))
-    factory.protocol = BallfightClientProtocal
-    connectWS(factory)
+    roomName = room
+    role = 'hero' if mode!='playMonster' else 'monster'
+    agent = strategy
+    winHandler = win
+    loseHandler = lose
+    
 
-    reactor.run()
+    print("Connecting to server %s..." % (url))
+    runner = ApplicationRunner(url=u"ws://%s/ws" % (url), realm=u"ballfight")
+    runner.run(BallfightConnector)
