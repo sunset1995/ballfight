@@ -67,6 +67,7 @@ connection.onopen = function (session) {
     function judge() {
         Object.keys(room).forEach((roomName) => {
             var now = room[roomName];
+            var state = now.game.state;
             var hero = now.game.hero;
             var monster = now.game.monster;
             var radius = now.game.radius;
@@ -75,6 +76,7 @@ connection.onopen = function (session) {
 
             if( now.game.checkUpdated() )
                 session.publish('server.'+roomName, [], {
+                    'state': state
                     'heroPos': [hero.x, hero.y],
                     'heroSpeed': [hero.vx, hero.vy],
                     'monsterPos': [monster.x, monster.y],

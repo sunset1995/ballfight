@@ -23,7 +23,7 @@ Game.prototype.start = function() {
     this.lastHeroY = 0;
     this.lastMonsterX = 0;
     this.lastMonsterY = 0;
-    this.lastRadius = this.radius;
+    this.lastState = this.state;
 };
 
 Game.prototype.next = function() {
@@ -73,8 +73,8 @@ Game.prototype.checkUpdated = function() {
         this.lastMonsterY = this.monster.y;
         ret = true;
     }
-    if( this.radius != this.lastRadius ) {
-        this.lastRadius = this.radius;
+    if( this.state != this.lastState ) {
+        this.lastState = this.state;
         ret = true;
     }
     return ret;
