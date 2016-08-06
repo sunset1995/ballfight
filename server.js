@@ -16,24 +16,24 @@ var room = {};
 // Define handler
 connection.onopen = function (session) {
 
+    console.log('Connection success');
+
 
     // Handle action in one room
     function actionHandler(args, kwargs, details) {
-        console.log("Action ", args, kwargs, details);
-
-        var roomName = details.topic;
+        var roomName = details.topic.slice(7);
         var action = args[0];
         var data = args[1];
-        if( action === 'start' ) {
-            room[roomName].game.start();
-            room[roomName].mode = data;
-        }
-        else if( action === 'hero' )
+        if( action === 'hero' )
             room[roomName].game.applyForceToHero(data);
         else if( action === 'monster' )
             room[roomName].game.applyForceToMonster(data);
         else if( action === 'gsensor' && typeof data === 'object' )
             room[roomName].gsensor = [data[0] || 0, data[1] || 0];
+        else if( action === 'start' )
+            room[roomName].game.start();
+        else if( action === 'setMode' )
+            room[roomName].mode = data;
 
         room[roomName].timestamp = Date.now();
     }
@@ -43,9 +43,8 @@ connection.onopen = function (session) {
     // Create one if not room not yet exited
     // No delete room machanic now
     function joinRoomHandler(args, kwargs, details) {
-        console.log("Join Room ", args, kwargs, details);
-
         var roomName = args[0];
+        var autoStart = args[1];
         if( !room[roomName] ) {
             // Create new room
             room[roomName] = {
@@ -58,6 +57,9 @@ connection.onopen = function (session) {
             // Listen for action in room
             session.subscribe('player.'+roomName, actionHandler);
         }
+        
+        if(typeof autoStart !== 'undefined')
+            room[roomName].game.autoStart = autoStart;
     }
 
 
@@ -66,7 +68,13 @@ connection.onopen = function (session) {
 
 
     // Process each room
+    var timestamp = Date.now();
     function judge() {
+        var nowTimestamp = Date.now();
+        console.log('\033[2J');
+        console.log('actual elapse: ', nowTimestamp-timestamp, 'ms');
+        timestamp = nowTimestamp;
+
         Object.keys(room).forEach((roomName) => {
             var now = room[roomName];
             var state = now.game.state;
@@ -92,8 +100,13 @@ connection.onopen = function (session) {
 
             now.game.next();
 
-            if( now.game.checkUpdated() )
+            if( now.game.checkUpdated() ) {
                 session.publish('server.'+roomName, [], pack);
+                console.log(roomName, JSON.stringify(pack));
+            }
+            else {
+                console.log(roomName, pack.state);
+            }
         });
 
         setTimeout(judge, config.interval);
@@ -103,10 +116,10 @@ connection.onopen = function (session) {
 
 autobahn.Connection.onclose = function (reason, details) {
    // connection closed, lost or unable to connect
-   console.log(reason)
-   console.log(details)
+   console.log('Connection was closed due to:', reason);
 };
 
 
 
+console.log('Connecting to server...');
 connection.open();

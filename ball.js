@@ -34,7 +34,6 @@ Ball.prototype.init = function(initValue) {
     this.ay = initValue.ay || 0;
     this.fx = initValue.fx || 0;
     this.fy = initValue.fy || 0;
-    this.k = 1;
 };
 
 Ball.prototype.applyForce = function(force) {
@@ -63,7 +62,7 @@ Ball.prototype.next = function() {
         this.vy = this.vy * this.maxSpeed / len;
     }
 
-    var fr = friction([this.vx, this.vy], this.k);
+    var fr = friction([this.vx, this.vy], config.k);
     this.ax = this.fx + fr[0];
     this.ay = this.fy + fr[1];
 };

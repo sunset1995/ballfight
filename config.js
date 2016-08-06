@@ -32,4 +32,5 @@ module.exports = {
     unitTime: 0.050,
     maxForce: 5000,
     maxSpeed: 500,
+    k: 1,
 };

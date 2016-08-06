@@ -5,10 +5,12 @@ var Ball = require('./ball.js');
 
 // Define game class
 var Game = function() {
-    this.hero = new physicalEngine.Ball();
-    this.monster = new physicalEngine.Ball();
-    this.init();
-};
+    this.autoStart = false;
+    this.hero = new Ball();
+    this.monster = new Ball();
+    this.start();
+    this.state = 'first';
+};  
 
 Game.prototype.start = function() {
     if( this.state === '' )
@@ -34,13 +36,20 @@ Game.prototype.next = function() {
     if( this.hero.distanceWith(this.monster) < 51 )
         this.hero.procCollisionWith(this.monster);
 
+    this.hero.norm();
+    this.monster.norm();
+
     // Detect game over
-    if( this.state === '' )
-        this.state = '';
-    else if( this.hero.distanceWithOrigin() > this.radius )
+    if( this.state !== '' ){
+        if( this.autoStart )
+            this.start();
+    }
+    else if( this.hero.distanceWithOrigin() > this.radius ) {
         this.state = 'lose';
-    else if( this.monster.distanceWithOrigin() > this.radius )
+    }
+    else if( this.monster.distanceWithOrigin() > this.radius ) {
         this.state = 'win';
+    }
     else
         this.radius -= config.radiusDecreasePerTerm;
 };
