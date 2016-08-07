@@ -1,5 +1,7 @@
 import sys
 import json
+import math
+import time
 from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.wamp import ApplicationSession
@@ -43,21 +45,38 @@ class BallfightConnector(ApplicationSession):
             sys.exit(0)
 
 
+        # Used to check whether time elapse too long within same state
+        # For fear that user registed agent take too long time and flood the receive queue
+        lastState = 'x'
+        lastRemoteTimestamp = 0
+        lastLocalTimestamp = 0
         def stateChangeHandler(**kargs):
+            nonlocal lastState
+            nonlocal lastRemoteTimestamp
+            nonlocal lastLocalTimestamp
             global data
             data = kargs
 
-            if 'state' not in kargs:
+            if kargs['state'] != '':
+                lastState = 'non-fight'
                 return
 
-            if kargs['state'] == '':
-                force = agent()
-                if not isinstance(force, list) or len(force)!=2:
-                    print('You should give me [fx, fy]')
-                    print('But you give me ', force)
-                    sys.exit(0)
-                else:
-                    self.publish(actionTopic, role, force)
+            nowLocal = math.floor(time.time() * 1000)
+            eps = nowLocal + (lastRemoteTimestamp - lastLocalTimestamp) - kargs['timestamp']
+            skip = eps > 50 and lastState=='fighting'
+            if skip:
+                return
+            lastState = 'fighting'
+            lastRemoteTimestamp = kargs['timestamp']
+            lastLocalTimestamp = nowLocal
+
+            force = agent()
+            if not isinstance(force, list) or len(force)!=2:
+                print('You should give me [fx, fy]')
+                print('But you give me ', force)
+                sys.exit(0)
+            else:
+                self.publish(actionTopic, role, force)
 
         try:
             yield self.subscribe(stateChangeHandler, stateTopic)
