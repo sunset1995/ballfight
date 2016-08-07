@@ -4,16 +4,7 @@
     <meta charset="utf-8">
     <title>Ballfight</title>
 
-    <link rel="stylesheet" type="text/css" href="/arena/style.css">
-    <style type="text/css">
-        .mid-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
     <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
 </head>
 <body>
@@ -42,11 +33,11 @@
     
 
     <script type="text/javascript">
-        (function() {
-            var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-                                        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-            window.requestAnimationFrame = requestAnimationFrame;
-        })();
+    (function() {
+        var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                                    window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+        window.requestAnimationFrame = requestAnimationFrame;
+    })();
     </script>
     <script type="text/javascript">
     var feedbackBlock = document.getElementById('feedback-info');

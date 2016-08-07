@@ -6,22 +6,9 @@
     <title>Gravity sensor</title>
 
     <link rel="stylesheet" type="text/css" href="style.css">
-    <style type="text/css">
-        .mid-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-    </style>
     <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
 </head>
 <body>
-
-    <div class="mid-center">
-        <h1 id="bg-info">Connecting to server...</h1>
-    </div>
 
     <div id="connect-panel">
         <header>Connection setting</header>
@@ -36,6 +23,10 @@
         <button id="connect">Submit</button>
     </div>
 
+    <div id="feedback-info">
+        <strong></strong>
+    </div>
+
     
     <script type="text/javascript">
         (function() {
@@ -45,85 +36,70 @@
         })();
     </script>
     <script>
+    document.getElementById('feedback-info').style.block = 'block';
+    var feedback = document.querySelector('#feedback-info > strong');
+
+    var url = '';
+    var room = '';
+    var session = null;
+    var connected = false;
     function connect() {
-        var bginfo = document.getElementById('bg-info');
+        document.querySelector('#connect-panel').style.display = 'none';
+        feedback.innerHTML = 'Connecting to server...';
+        
+        url = document.getElementById('url').value;
+        room = document.getElementById('room').value;
 
-        var sock = null;
-        var url = 'ws://' + location.hostname + ':8080';
-        var connecting = true;
-        if ("WebSocket" in window)
-            sock = new WebSocket(url);
-        else if ("MozWebSocket" in window)
-            sock = new MozWebSocket(url);
-        else
-            console.log('web socket not supported');
+        var connection = new autobahn.Connection({
+            url: url,
+            realm: 'ballfight',
+        });
 
-
-        if( sock ) {
-            sock.onopen = function() {
-                console.log('Connect success');
-                bginfo.innerHTML = 'Connect success';
-                connecting = false;
-                sock.send(JSON.stringify({
-                    'action': 'setrole',
-                    'data': 'gsensor',
-                }));
-            }
-            sock.onclose = function() {
-                console.log('Connect closed');
-            }
-        }
-
-
-
-
-        // g-sensor
-        var info = {
-            gsensorX: 0,
-            gsensorY: 0,
-            gsensorZ: 0,
+        connection.onopen = function (ses) {
+            connected = true;
+            feedback.innerHTML = 'Connection success';
+            session = ses;
         };
-        window.ondevicemotion = function(event) {
-            info.gsensorX = event.accelerationIncludingGravity.x || 0;  
-            info.gsensorY = event.accelerationIncludingGravity.y || 0;
-            info.gsensorZ = event.accelerationIncludingGravity.z || 0;
 
-            info.gsensorX = Math.floor(info.gsensorX*1000) / 1000;
-            info.gsensorY = Math.floor(info.gsensorY*1000) / 1000;
-            info.gsensorZ = Math.floor(info.gsensorZ*1000) / 1000;
+        connection.onclose = function (reason, details) {
+            connected = false;
+            feedback.innerHTML = 'Connection closed, please refresh this page';
+        };
+
+        connection.open();
+    }
+    document.getElementById('connect').onclick = connect;
+
+
+
+    // g-sensor
+    var gsensor = [0, 0];
+    window.ondevicemotion = function(event) {
+        gsensor[0] = event.accelerationIncludingGravity.x || 0;  
+        gsensor[1] = event.accelerationIncludingGravity.y || 0;
+
+        gsensor[0] = parseInt(gsensor[0]*100, 10);
+        gsensor[1] = parseInt(gsensor[1]*100, 10);
+    }
+
+
+
+    // sender
+    var interval = 30;
+    var lastTimestamp = null;
+    function sender(timestamp) {
+        if( lastTimestamp===null )
+            lastTimestamp = timestamp;
+
+        if( timestamp-lastTimestamp > interval && connected ) {
+            session.publish('player.'+room, ['gsensor', gsensor], {});
+            feedback.innerHTML = gsensor[0] + '<br>' + gsensor[1];
+            lastTimestamp = timestamp;
         }
 
-
-        // sender
-        var senderClousure = function() {
-            var fps = 30;
-            var interval = 1000 / fps;
-            
-            var lastTimestamp = null;
-            var requestID = null;
-            function sender(timestamp) {
-                if( lastTimestamp===null )
-                    lastTimestamp = timestamp;
-
-                if( timestamp-lastTimestamp > interval ) {
-                    if( !connecting ) {
-                        sock.send(JSON.stringify({
-                            'action': 'toHero',
-                            'data': info,
-                        }));
-                        bginfo.innerHTML = JSON.stringify(info, null, '\t')
-                    }
-                    lastTimestamp = timestamp;
-                }
-                requestID = requestAnimationFrame(sender);
-            }
-            
-            requestID = requestAnimationFrame(sender);
-            return function() {
-                return requestID;
-            };
-        }();
+        requestAnimationFrame(sender);
     }
+    requestAnimationFrame(sender);
     </script>
 </body>
 </html>
