@@ -98,6 +98,7 @@ connection.onopen = function (session) {
                 'monsterSpeed': [monster.vx, monster.vy],
                 'radius': radius,
                 'gsensor': gsensor,
+                'timestamp': nowTimestamp,
             };
 
             if( state==='' && Agent[now.mode] ) {
