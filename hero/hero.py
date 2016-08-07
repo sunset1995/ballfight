@@ -1,4 +1,5 @@
 import api
+import math
 
 
 def strategy():
@@ -9,10 +10,13 @@ def strategy():
     arenaR = api.getArenaRadius()
     gsensor = api.getGsensor()
 
-    return [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]]
+    difX = enemyPos[0]-myPos[0]
+    difY = enemyPos[1]-myPos[1]
+
+    return [difX*10, difY*10]
 
 
 api.setRoom('sunset')
-api.setMonster('softer')
+api.setMonster('centerCamper')
 
-api.play(strategy, True)
+api.play(strategy, False)

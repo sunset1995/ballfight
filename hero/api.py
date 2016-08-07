@@ -29,6 +29,7 @@ class BallfightConnector(ApplicationSession):
     @inlineCallbacks
     def onJoin(self, details):
         print("Connection success")
+        print("Setting game ...")
 
         stateTopic = 'server.%s' % (roomName)
         actionTopic = 'player.%s' % (roomName)
@@ -36,11 +37,10 @@ class BallfightConnector(ApplicationSession):
 
 
         try:
-            print("joining room %s..." % (roomName))
-            yield self.publish(u'joinRoom', roomName, autoStart)
-            print("join room success")
+            yield self.publish(u'joinRoom', roomName, mode, autoStart)
         except Exception as e:
             print("fail to join room")
+            sys.exit(0)
 
 
         def stateChangeHandler(**kargs):
@@ -55,16 +55,18 @@ class BallfightConnector(ApplicationSession):
                 if not isinstance(force, list) or len(force)!=2:
                     print('You should give me [fx, fy]')
                     print('But you give me ', force)
+                    sys.exit(0)
                 else:
                     self.publish(actionTopic, role, force)
-                    print('publish ', actionTopic, role, force)
 
         try:
-            print('subscribing %s ...' % stateTopic)
             yield self.subscribe(stateChangeHandler, stateTopic)
-            print("subscribe success")
         except Exception as e:
             print("fail to subscribe")
+            sys.exit(0)
+
+        print("Setting game success")
+        print("Enjoy it!")
 
 
     def onDisconnect(self):
