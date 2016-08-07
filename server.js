@@ -31,8 +31,10 @@ connection.onopen = function (session) {
             room[roomName].game.applyForceToHero(data);
         else if( action === 'monster' )
             room[roomName].game.applyForceToMonster(data);
-        else if( action === 'gsensor' && typeof data === 'object' )
-            room[roomName].gsensor = [data[0] || 0, data[1] || 0];
+        else if( action === 'gsensor' ) {
+            if( typeof data === 'object' )
+                room[roomName].gsensor = [data[0] || 0, data[1] || 0];
+        }
         else if( action === 'start' )
             room[roomName].game.start();
 
