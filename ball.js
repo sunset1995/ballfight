@@ -4,7 +4,7 @@ var config = require('./config.js');
 
 // Define self used function
 function floorEPS(lf) {
-    return Math.floor(lf*1000) / 1000;
+    return Math.floor(lf*10) / 10;
 }
 function dot(v1, v2) {
     return v1[0]*v2[0] + v1[1]*v2[1];
@@ -34,6 +34,7 @@ Ball.prototype.init = function(initValue) {
     this.ay = initValue.ay || 0;
     this.fx = initValue.fx || 0;
     this.fy = initValue.fy || 0;
+    this.k = 1;
 };
 
 Ball.prototype.applyForce = function(force) {
@@ -46,8 +47,8 @@ Ball.prototype.applyForce = function(force) {
         force[0] *= config.maxForce / len;
         force[1] *= config.maxForce / len;
     }
-    this.fx = floorEPS(force[0] || this.fx);
-    this.fy = floorEPS(force[1] || this.fy);
+    this.fx = floorEPS(force[0]) || 0;
+    this.fy = floorEPS(force[1]) || 0;
 };
 
 Ball.prototype.next = function() {
@@ -58,18 +59,18 @@ Ball.prototype.next = function() {
     this.vy = this.vy + this.ay * config.unitTime;
     var len = vectorLength([this.vx, this.vy]);
     if( len > config.maxSpeed ) {
-        this.vx = this.vx * this.maxSpeed / len;
-        this.vy = this.vy * this.maxSpeed / len;
+        this.vx *= config.maxSpeed / len;
+        this.vy *= config.maxSpeed / len;
     }
 
-    var fr = friction([this.vx, this.vy], config.k);
+    var fr = friction([this.vx, this.vy], this.k);
     this.ax = this.fx + fr[0];
     this.ay = this.fy + fr[1];
 };
 
 Ball.prototype.norm = function() {
-	this.x = parseInt(this.x, 10);
-    this.y = parseInt(this.y, 10);
+	this.x = floorEPS(this.x);
+    this.y = floorEPS(this.y);
     this.vx = floorEPS(this.vx);
     this.vy = floorEPS(this.vy);
     this.ax = floorEPS(this.ax);
@@ -93,6 +94,8 @@ Ball.prototype.distanceWithOrigin = function() {
 Ball.prototype.procCollisionWith = function(other) {
     var base = [this.x-other.x, this.y-other.y];
     var p = vectorLength(base);
+    if( Math.abs(p) < 1 )
+        p = p>0 ? 1 : -1;
     base[0] /= p;
     base[1] /= p;
     var pA = dot([this.vx, this.vy], base);

@@ -2,7 +2,7 @@ module.exports = {
 
     // Network related
     url: 'ws://wamp-router-sunset1995.c9users.io:8080/ws',
-    interval: 40,
+    interval: 30,
 
     // Game related
     radiusInit: 350,
@@ -29,8 +29,7 @@ module.exports = {
     },
 
     // Physical engine related
-    unitTime: 0.050,
+    unitTime: 0.020,
     maxForce: 5000,
     maxSpeed: 500,
-    k: 1,
 };

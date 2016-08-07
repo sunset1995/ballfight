@@ -22,6 +22,9 @@ connection.onopen = function (session) {
     // Handle action in one room
     function actionHandler(args, kwargs, details) {
         var roomName = details.topic.slice(7);
+        if( !room[roomName] )
+            return;
+
         var action = args[0];
         var data = args[1];
         if( action === 'hero' )
@@ -32,8 +35,6 @@ connection.onopen = function (session) {
             room[roomName].gsensor = [data[0] || 0, data[1] || 0];
         else if( action === 'start' )
             room[roomName].game.start();
-        else if( action === 'setMode' )
-            room[roomName].mode = data;
 
         room[roomName].timestamp = Date.now();
     }
@@ -44,7 +45,8 @@ connection.onopen = function (session) {
     // No delete room machanic now
     function joinRoomHandler(args, kwargs, details) {
         var roomName = args[0];
-        var autoStart = args[1];
+        var mode = args[1];
+        var autoStart = args[2];
         if( !room[roomName] ) {
             // Create new room
             room[roomName] = {
@@ -58,6 +60,9 @@ connection.onopen = function (session) {
             session.subscribe('player.'+roomName, actionHandler);
         }
         
+        if(typeof mode !== 'undefined')
+            room[roomName].mode = mode;
+
         if(typeof autoStart !== 'undefined')
             room[roomName].game.autoStart = autoStart;
     }
@@ -114,7 +119,7 @@ connection.onopen = function (session) {
     judge();
 };
 
-autobahn.Connection.onclose = function (reason, details) {
+connection.onclose = function (reason, details) {
    // connection closed, lost or unable to connect
    console.log('Connection was closed due to:', reason);
 };
