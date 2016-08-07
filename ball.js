@@ -95,7 +95,7 @@ Ball.prototype.procCollisionWith = function(other) {
     var base = [this.x-other.x, this.y-other.y];
     var p = vectorLength(base);
     if( Math.abs(p) < 1 )
-        p = p>0 ? 1 : -1;
+        return;
     base[0] /= p;
     base[1] /= p;
     var pA = dot([this.vx, this.vy], base);
@@ -106,6 +106,16 @@ Ball.prototype.procCollisionWith = function(other) {
     this.vy += -copA[1] + copB[1];
     other.vx += -copB[0] + copA[0];
     other.vy += -copB[1] + copA[1];
+
+    if( this.distanceWith(other) < 50 ) {
+        var mid = [(this.x+other.x)/2, (this.y+other.y)/2];
+        base[0] *= 25;
+        base[1] *= 25;
+        this.x = mid[0] + base[0];
+        this.y = mid[1] + base[1];
+        other.x = mid[0] - base[0];
+        other.y = mid[1] - base[1];
+    }
 };
 
 

@@ -46,9 +46,9 @@ function rusher(myPos, mySpeed, enemyPos, enemySpeed, radius) {
 
 function centerCamper(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     var f = [-myPos[0], -myPos[1]];
-    fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
-    f[0] = f[0]*500/fLen - mySpeed[0] + Math.random()*50 - 25;
-    f[1] = f[1]*500/fLen - mySpeed[1] + Math.random()*50 - 25;
+    fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]) + 0.01;
+    f[0] = f[0]*1000/fLen + Math.random()*10 - 20;
+    f[1] = f[1]*1000/fLen + Math.random()*10 - 20;
     return f;
 }
 

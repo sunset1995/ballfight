@@ -33,7 +33,7 @@ Game.prototype.next = function() {
     if( this.state !== '' ) {
         this.hero.fx = this.hero.fy = 0;
         this.monster.fx = this.monster.fy = 0;
-        this.hero.k = this.monster.k = 5;
+        this.hero.k = this.monster.k = 2;
     }
     this.hero.next();
     this.monster.next();

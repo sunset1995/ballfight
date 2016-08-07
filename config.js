@@ -30,6 +30,6 @@ module.exports = {
 
     // Physical engine related
     unitTime: 0.020,
-    maxForce: 5000,
+    maxForce: 1000,
     maxSpeed: 500,
 };
