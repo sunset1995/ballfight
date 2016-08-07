@@ -3,127 +3,135 @@
 <head>
     <meta charset="utf-8">
     <title>Ballfight</title>
+
+    <link rel="stylesheet" type="text/css" href="/arena/style.css">
+    <style type="text/css">
+        .mid-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
+    <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
 </head>
 <body>
     
-    <div id="feedback-info">
-        <strong></strong>
+    <div id="connect-panel">
+        <header>Connection setting</header>
+        <section>
+            <label>url</label>
+            <input type="text" id="url" value="ws://wamp-router-sunset1995.c9users.io:8080/ws">
+        </section>
+        <section>
+            <label>room</label>
+            <input type="text" id="room" value="yourname">
+        </section>
+        <button id="connect">Submit</button>
     </div>
 
-    <button id="start-fight">Fight</button>
+    <div id="feedback-info">
+        <strong></strong>
+        <button id="start-fight">Fight</button>
+    </div>
 
     <div id="arena"></div>
     <div id="hero"></div>
     <div id="monster"></div>
-
-    <link rel="stylesheet" type="text/css" href="css/physicalEngine.css">
-    <script type="text/javascript" src="js/requestAnimationFramePatch.js"></script>
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/physicalEngine.js"></script>
-    <script type="text/javascript" src="js/gameLogic.js"></script>
+    
 
     <script type="text/javascript">
+        (function() {
+            var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                                        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+            window.requestAnimationFrame = requestAnimationFrame;
+        })();
+    </script>
+    <script type="text/javascript">
+    var feedbackBlock = document.getElementById('feedback-info');
+    var feedback = document.querySelector('#feedback-info > strong');
+    var startFight = document.querySelector('#start-fight');
+    var arenaDOM = document.getElementById('arena');
+    var heroDOM = document.getElementById('hero');
+    var monsterDOM = document.getElementById('monster');
+
+    var connected = false;
+    var lastState = 'first';
+    var state = 'first';
+    var radius = 350;
+    var hero = [0, 0];
+    var monster = [0, 0];
+
+
+
+
+    function updateDOM(timestamp) {
+        // read
+        var arena = arenaDOM.getBoundingClientRect();
+        var oX = arena.left + radius;
+        var oY = arena.top + radius;
+        var stateChange = lastState!=state;
+        lastState = state;
+
+        // write
+        arenaDOM.style.width = (2*radius) + 'px';
+        arenaDOM.style.height = (2*radius) + 'px';
+        heroDOM.style.transform = 'translate(%dpx, %dpx)'.replace('%d', oX+hero[0]).replace('%d', oY+hero[1]);
+        monsterDOM.style.transform = 'translate(%dpx, %dpx)'.replace('%d', oX+monster[0]).replace('%d', oY+monster[1]);
+        if( stateChange ) {
+            feedback.innerHTML = state;
+            feedbackBlock.style.display = (state==='')? 'none' : 'block';
+        }
+
+
+        requestAnimationFrame(updateDOM);
+    }
+    requestAnimationFrame(updateDOM);
+
+
+
+
+    function connect() {
+        document.querySelector('#connect-panel').style.display = 'none';
+        state = 'Connecting to server...';
         
-        window.Feedback.show('Connecting to server...');
+        var url = document.getElementById('url').value;
+        var room = document.getElementById('room').value;
 
-        var sock = null;
-        var url = 'ws://' + location.hostname + ':8081';
-        
-        function connectToServer() {
-            if ("WebSocket" in window)
-                sock = new WebSocket(url);
-            else if ("MozWebSocket" in window)
-                sock = new MozWebSocket(url);
-            else
-                console.log('web socket not supported');
-        }
-        connectToServer();
-
-
-        if( sock ) {
-            sock.onopen = function() {
-                console.log('Connect success');
-                sock.send(JSON.stringify({
-                    'action': 'setrole',
-                    'data': 'arena',
-                }));
-                $('#start-fight')[0].style.display = 'block';
-                window.Feedback.close();
-            };
-            sock.onclose = function() {
-                console.log('Connect closed');
-
-                $('#start-fight')[0].style.display = 'none';
-                window.Feedback.show('Connection closed, please press "ctrl + shift + R"');
-                sock = false;
-            };
-            sock.onmessage = function(e) {
-                var res = JSON.parse(e.data || '');
-                if( res.role === 'hero' )
-                    Hero.applyForce(res.force);
-                else if( res.role === 'monster' )
-                    Monster.applyForce(res.force);
-            };
-
-            function checkSockAlive() {
-                if( !sock && $('#start-fight')[0].style.display !== 'none' ) {
-                    $('#start-fight')[0].style.display = 'none';
-                    window.Feedback.show('Connection closed, please press "ctrl + shift + R"');
-                }
-                requestAnimationFrame(checkSockAlive);
-            }
-            requestAnimationFrame(checkSockAlive);
-        }
-        else {
-            $('#start-fight')[0].style.display = 'none';
-            window.Feedback.show('Connection closed, please press "ctrl + shift + R"');
-        }
-
-
-        var lastTimestamp = null;
-        var interval = 1000 / 30;
-
-        function packInfo() {
-            return {
-                'heroPosition': [Hero.x-Arena.x(), Hero.y-Arena.y()],
-                'heroSpeed': [Hero.vx, Hero.vy],
-                'monsterPosition': [Monster.x-Arena.x(), Monster.y-Arena.y()],
-                'monsterSpeed': [Monster.vx, Monster.vy],
-                'arenaRadius': Arena.r(),
-            };
-        }
-
-        function state_playing(timestamp) {
-            if( timestamp - lastTimestamp > interval ) {
-                sock.send(JSON.stringify({
-                    'action': 'toPlayer',
-                    'data': packInfo(),
-                }));
-                lastTimestamp = timestamp;
-            }
-
-            if( window.GameStatus() !== 'playing' )
-                requestAnimationFrame(state_waiting);
-            else 
-                requestAnimationFrame(state_playing);
-        }
-
-        function state_waiting(timestamp) {
-            lastTimestamp = timestamp;
-            if( window.GameStatus() === 'playing' )
-                requestAnimationFrame(state_playing);
-            else
-                requestAnimationFrame(state_waiting);
-        }
-        
-        requestAnimationFrame(state_waiting);
-
-
-        // Binding
-        $('#start-fight').click(function(){
-            if( sock )
-                window.StartFight();
+        var connection = new autobahn.Connection({
+            url: url,
+            realm: 'ballfight',
         });
+
+        connection.onopen = function (session) {
+            connected = true;
+            state = 'Let start!!';
+
+            session.subscribe('server.'+room, function(args, kwargs, details) {
+                state = kwargs.state || '';
+                radius = kwargs.radius || 0;
+                hero = kwargs.heroPos || [0, 0];
+                monster = kwargs.monsterPos || [0, 0];
+            });
+            session.publish('joinRoom', [room], {});
+
+            startFight.style.display = 'inline-block';
+            startFight.onclick = function() {
+                state = '';
+                session.publish('player.'+room, ['start'], {});
+            };
+        };
+
+        connection.onclose = function (reason, details) {
+            connected = false;
+            state = 'Connection closed, please press "ctrl + shift + R"';
+            startFight.style.display = 'none';
+        };
+
+        connection.open();
+    }
+    document.getElementById('connect').onclick = connect;
     </script>
 
 </body>

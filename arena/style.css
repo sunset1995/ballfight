@@ -1,0 +1,140 @@
+* {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+html, body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    overflow: hidden;
+}
+#arena {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 700px;
+    height: 700px;
+    z-index: 100;
+    transform: translate3d(-50%, -50%, 0);
+    border-radius: 50%;
+    background-color: #333;
+    
+    will-change: transform;
+}
+#hero {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    left: -25px;
+    top: -25px;
+    border: 1px black solid;
+    z-index: 200;
+    border-radius: 50%;
+    background-color: #93E4C1;
+    transition: opacity 500ms;
+}
+#monster {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    left: -25px;
+    top: -25px;
+    border: 1px black solid;
+    z-index: 200;
+    border-radius: 50%;
+    background-color: #FF9090;
+    transition: opacity 500ms;
+}
+
+
+/* Feedback panel */
+#feedback-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 900;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+#feedback-info strong {
+    display: block;
+    font-size: 4em;
+    color: rgb(133, 166, 177);
+    text-shadow: 2px 2px white;
+}
+#start-fight {
+    display: none;
+    font-size: 2em;
+    padding: 1em 2em;
+    z-index: 1000;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #85A6B1;
+    color: rgba(238, 238, 238, 0.79);
+    transition: color 300ms;
+}
+#start-fight:hover {
+    color: rgba(238, 238, 238, 1);
+}
+
+
+/* Init pannel */
+#connect-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+    width: 90%;
+    max-width: 500px;
+    background-color: #333;
+    border-radius: #333;
+    padding: 2em 0;
+    color: white;
+    border-radius: 10px;
+}
+
+#connect-panel header {
+    display: block;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+#connect-panel section {
+    display: block;
+    text-align: center;
+    margin-top: 1em;
+}
+
+#connect-panel label {
+    display: block;
+    font-size: 1em;
+    margin: 0 auto;
+}
+
+#connect-panel input {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    max-width: 300px;
+    padding: .3em 0;
+    text-align: center;
+    color: #333;
+    background-color: #eee;
+    border-radius: 3px;
+}
+
+#connect {
+    display: block;
+    font-size: 1em;
+    margin: 2em auto 0 auto;
+    padding: .5em 1em;
+    text-align: center;
+    background-color: #7fb959;
+    color: white;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+}

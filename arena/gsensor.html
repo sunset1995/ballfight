@@ -5,19 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gravity sensor</title>
 
+    <link rel="stylesheet" type="text/css" href="style.css">
     <style type="text/css">
-        * {
-            padding: 0;
-            margin: 0;
-            font-family: sans-serif;
-        }
-        html, body {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background-color: #333;
-            color: white;
-        }
         .mid-center {
             position: absolute;
             top: 50%;
@@ -26,11 +15,25 @@
             text-align: center;
         }
     </style>
+    <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
 </head>
 <body>
 
     <div class="mid-center">
         <h1 id="bg-info">Connecting to server...</h1>
+    </div>
+
+    <div id="connect-panel">
+        <header>Connection setting</header>
+        <section>
+            <label>url</label>
+            <input type="text" id="url" value="ws://wamp-router-sunset1995.c9users.io:8080/ws">
+        </section>
+        <section>
+            <label>room</label>
+            <input type="text" id="room" value="yourname">
+        </section>
+        <button id="connect">Submit</button>
     </div>
 
     
@@ -42,7 +45,7 @@
         })();
     </script>
     <script>
-
+    function connect() {
         var bginfo = document.getElementById('bg-info');
 
         var sock = null;
@@ -120,6 +123,7 @@
                 return requestID;
             };
         }();
+    }
     </script>
 </body>
 </html>
