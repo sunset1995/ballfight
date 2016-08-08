@@ -2,7 +2,6 @@ import sys
 import json
 import math
 import time
-import array
 import msgpack
 from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks
@@ -15,13 +14,13 @@ mode = 'softer'
 role = 'hero'
 agent = lambda: [0, 0]
 data = {
-    b'state': 'first',
-    b'heroPos': [0, 0],
-    b'heroSpeed': [0, 0],
-    b'monsterPos': [0, 0],
-    b'monsterSpeed': [0, 0],
-    b'radius': 0,
-    b'gsensor': [0, 0],
+    'state': 'first',
+    'heroPos': [0, 0],
+    'heroSpeed': [0, 0],
+    'monsterPos': [0, 0],
+    'monsterSpeed': [0, 0],
+    'radius': 0,
+    'gsensor': [0, 0],
 }
 autoStart = False
 
@@ -57,22 +56,22 @@ class BallfightConnector(ApplicationSession):
             nonlocal lastRemoteTimestamp
             nonlocal lastLocalTimestamp
             global data
-            kargs = msgpack.unpackb(array.array('B', args[0]['data']))
+            kargs = msgpack.load(args[0])
             data = kargs
 
-            if kargs[b'state'] != '':
+            if kargs['state'] != '':
                 if lastState != 'non-fight':
                     agent()
                     lastState = 'non-fight'
                 return
 
             nowLocal = math.floor(time.time() * 1000)
-            eps = nowLocal + (lastRemoteTimestamp - lastLocalTimestamp) - kargs[b'timestamp']
+            eps = nowLocal + (lastRemoteTimestamp - lastLocalTimestamp) - kargs['timestamp']
             skip = eps > 50 and lastState=='fighting'
             if skip:
                 return
             lastState = 'fighting'
-            lastRemoteTimestamp = kargs[b'timestamp']
+            lastRemoteTimestamp = kargs['timestamp']
             lastLocalTimestamp = nowLocal
 
             force = agent()
@@ -102,42 +101,42 @@ class BallfightConnector(ApplicationSession):
 
 # Game info api
 def getState():
-    if b'state' in data:
-        return data[b'state']
+    if 'state' in data:
+        return data['state']
     return ''
 
 def getMyPosition():
-    key = b'heroPos' if role == 'hero' else b'monsterPos'
+    key = 'heroPos' if role == 'hero' else 'monsterPos'
     if key in data:
         return data[key]
     return [0, 0]
 
 def getMySpeed():
-    key = b'heroSpeed' if role == 'hero' else b'monsterSpeed'
+    key = 'heroSpeed' if role == 'hero' else 'monsterSpeed'
     if key in data:
         return data[key]
     return [0, 0]
 
 def getEnemyPosition():
-    key = b'heroPos' if role != 'hero' else b'monsterPos'
+    key = 'heroPos' if role != 'hero' else 'monsterPos'
     if key in data:
         return data[key]
     return [0, 0]
 
 def getEnemySpeed():
-    key = b'heroSpeed' if role != 'hero' else b'monsterSpeed'
+    key = 'heroSpeed' if role != 'hero' else 'monsterSpeed'
     if key in data:
         return data[key]
     return [0, 0]
 
 def getArenaRadius():
-    if b'radius' in data:
-        return data[b'radius']
+    if 'radius' in data:
+        return data['radius']
     return 350
 
 def getGsensor():
-    if b'gsensor' in data:
-        return data[b'gsensor']
+    if 'gsensor' in data:
+        return data['gsensor']
     return [0, 0]
 
 
