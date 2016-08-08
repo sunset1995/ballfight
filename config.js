@@ -6,7 +6,7 @@ module.exports = {
 
     // Game related
     radiusInit: 350,
-    radiusDecreasePerTerm: 0.5,
+    radiusDecreasePerTerm: 0.4,
     heroInit: {
         x: 0,
         y: 250,
@@ -29,7 +29,7 @@ module.exports = {
     },
 
     // Physical engine related
-    unitTime: 0.020,
+    unitTime: 0.016,
     maxForce: 1000,
     maxSpeed: 500,
 };
