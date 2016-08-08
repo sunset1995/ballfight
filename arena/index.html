@@ -110,9 +110,9 @@
             state = 'Let start!!';
 
             session.subscribe('server.observer.'+room, function(args, kwargs, details) {
-                var ret = msgpack.decode(args[0]);
-                console.log(args[0])
+                console.log(args, kwargs, details)
                 console.log(ret)
+                var ret = msgpack.decode(args[0]);
                 state = ret.state || '';
                 radius = ret.radius || 0;
                 hero = ret.heroPos || [0, 0];
