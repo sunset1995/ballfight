@@ -1,8 +1,8 @@
 import api
-import math
 
 
 def strategy():
+    state = api.getState()
     myPos = api.getMyPosition()
     mySpeed = api.getMySpeed()
     enemyPos = api.getEnemyPosition()
@@ -10,13 +10,10 @@ def strategy():
     arenaR = api.getArenaRadius()
     gsensor = api.getGsensor()
 
-    gsensor[0] = int(-gsensor[0]/10) * 10
-    gsensor[1] = int(gsensor[1]/10) * 10
-
-    return gsensor
+    return [-gsensor[0], gsensor[1]]
 
 
-api.setRoom('sunset')
+api.setRoom('yourname')
 api.setMonster('softer')
 
-api.play(strategy, False)
+api.play(strategy)
