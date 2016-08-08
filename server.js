@@ -99,6 +99,12 @@ connection.onopen = function (session) {
                 'gsensor': gsensor,
                 'timestamp': timestamp,
             };
+            var packSmall {
+                'state': state,
+                'heroPos': [hero.x, hero.y],
+                'radius': radius,
+                'monsterPos': [monster.x, monster.y],
+            };
 
             if( state==='' && Agent[now.mode] ) {
                 var force = Agent[now.mode](pack.monsterPos, pack.monsterSpeed, pack.heroPos, pack.heroSpeed, pack.radius);
@@ -109,6 +115,7 @@ connection.onopen = function (session) {
 
             if( now.game.checkUpdated() ) {
                 session.publish('server.'+roomName, [], pack);
+                session.publish('server.observer.'+roomName, [], packSmall);
                 console.log(roomName, JSON.stringify(pack));
             }
             else {
