@@ -1,7 +1,7 @@
 module.exports = {
 
     // Network related
-    url: 'ws://wamp-router-sunset1995.c9users.io:8080/ws',
+    url: 'ws://127.0.0.1:8080/ws',
     interval: 30,
 
     // Game related
