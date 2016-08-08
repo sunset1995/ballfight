@@ -30,6 +30,7 @@ class BallfightConnector(ApplicationSession):
 
     @inlineCallbacks
     def onJoin(self, details):
+        self.log = None
         print("Connection success")
         print("Setting game ...")
 
@@ -58,7 +59,9 @@ class BallfightConnector(ApplicationSession):
             data = kargs
 
             if kargs['state'] != '':
-                lastState = 'non-fight'
+                if lastState != 'non-fight':
+                    agent()
+                    lastState = 'non-fight'
                 return
 
             nowLocal = math.floor(time.time() * 1000)
