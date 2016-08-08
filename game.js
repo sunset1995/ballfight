@@ -56,7 +56,7 @@ Game.prototype.next = function() {
         this.state = 'win';
     else {
         this.radius -= config.radiusDecreasePerTerm;
-        this.radius = parseInt(this.radi, 10)/10;
+        this.radius = parseInt(this.radius, 10)/10;
     }
 };
 
