@@ -39,7 +39,7 @@ pip3 install -r requirement.txt
 ## 開始吧！
 
 
-#### 英雄
+### 英雄
 打開 _hero.py_
 ```python
 import api
@@ -93,7 +93,7 @@ api.play(strategy)
 在黑盒子(terminal)執行 `python3 hero.py` 以執行 hero。
 
 
-#### 觀察者
+### 觀察者
 到此為止已實作好英雄的程式，接者打開瀏覽器連上[觀察者](http://snp2016.nctu.me/)以讓遊戲開始並檢視對戰過程。  
 連上後 _Connection setting_ 的部分：  
 - url：已預設填上 TA 的伺服器，可以不用動這邊
@@ -101,14 +101,14 @@ api.play(strategy)
 按下 _Submit_ 即可進入該 room。進入後按下 _Fight_ 可讓遊戲開始。  
 
 
-#### 手機重力感應器
+### 手機重力感應器
 若想要使用手機的重力感應器，請連上[此](http://snp2016.nctu.me/)。設定同上。  
 若沒有連上的話，api.getGsensor() 的結果將為 `[0, 0]` 或上次手機斷線時會後一筆資料。  
 
 
 
 <br>
-# PVP
+## PVP
 若你想讓你的兩支程式對戰，你需要：  
 1. 新建檔案 `monster.api` 在同一個資料夾  
 2. 將 `hero.api` 裡的東西複製到 `monster.api`  
@@ -116,3 +116,12 @@ api.play(strategy)
 4. 實作各自的 strategy  
 5. 在兩個黑盒子(terminal)分別執行 `python3 hero.py`, `python3 monster.py`  
 6. 打開觀察者(詳見上面)  
+
+
+
+<br>
+## AI Trainer
+若你想要訓練你的 AI 玩這個遊戲：  
+- `api.play(strategy, True)` 將第二個參數改成 `True` 伺服器將會在遊戲結束後一秒鐘自動開始新遊戲  
+- 還是可以利用觀察者觀戰
+- 聯絡 TA `s2821d3721@gmail.com` 協助你私架此遊戲的伺服器
