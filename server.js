@@ -99,7 +99,7 @@ connection.onopen = function (session) {
                 'gsensor': gsensor,
                 'timestamp': timestamp,
             };
-            var packSmall {
+            var packSmall = {
                 'state': state,
                 'heroPos': [hero.x, hero.y],
                 'radius': radius,
