@@ -54,8 +54,10 @@ Game.prototype.next = function() {
         this.state = 'lose';
     else if( this.monster.distanceWithOrigin() > this.radius + 25 )
         this.state = 'win';
-    else
+    else {
         this.radius -= config.radiusDecreasePerTerm;
+        this.radius = parseInt(this.radi, 10)/10;
+    }
 };
 
 Game.prototype.applyForceToHero = function(force) {
