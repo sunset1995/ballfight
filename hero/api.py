@@ -15,7 +15,7 @@ mode = 'softer'
 role = 'hero'
 agent = lambda: [0, 0]
 data = {
-    b'state': b'first',
+    b'state': 'first',
     b'heroPos': [0, 0],
     b'heroSpeed': [0, 0],
     b'monsterPos': [0, 0],
@@ -60,7 +60,7 @@ class BallfightConnector(ApplicationSession):
             kargs = msgpack.unpackb(array.array('B', args[0]['data']))
             data = kargs
 
-            if kargs[b'state'] != b'':
+            if kargs[b'state'] != '':
                 if lastState != 'non-fight':
                     agent()
                     lastState = 'non-fight'
@@ -103,7 +103,7 @@ class BallfightConnector(ApplicationSession):
 # Game info api
 def getState():
     if b'state' in data:
-        return data[b'state'].decode()
+        return data[b'state']
     return ''
 
 def getMyPosition():
