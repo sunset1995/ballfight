@@ -116,10 +116,10 @@ connection.onopen = function (session) {
             }
         });
 
-        var procTime = Date.time() - timestamp;
+        var procTime = parseInt(Date.now() - timestamp, 10);
         console.log('process time:', procTime, 'ms');
 
-        var nextTime = config.interval - procTime
+        var nextTime = parseInt(config.interval - procTime, 10);
         setTimeout(judge, nextTime>0? nextTime : 0);
     }
     judge();
