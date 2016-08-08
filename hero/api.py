@@ -30,7 +30,6 @@ class BallfightConnector(ApplicationSession):
 
     @inlineCallbacks
     def onJoin(self, details):
-        self.log = None
         print("Connection success")
         print("Setting game ...")
 
