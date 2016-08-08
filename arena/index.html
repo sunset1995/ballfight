@@ -60,8 +60,8 @@
     function updateDOM(timestamp) {
         // read
         var arena = arenaDOM.getBoundingClientRect();
-        var oX = arena.left + radius;
-        var oY = arena.top + radius;
+        var oX = document.body.getBoundingClientRect().width / 2;
+        var oY = document.body.getBoundingClientRect().height / 2;
         var stateChange = lastState!=state;
         lastState = state;
 
