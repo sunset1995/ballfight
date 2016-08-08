@@ -90,7 +90,7 @@ connection.onopen = function (session) {
             var radius = now.game.radius;
             var gsensor = now.gsensor;
 
-            var pack = msgpack.encode({
+            var pack = {
                 'state': state,
                 'heroPos': [hero.x, hero.y],
                 'heroSpeed': [hero.vx, hero.vy],
@@ -99,13 +99,13 @@ connection.onopen = function (session) {
                 'radius': radius,
                 'gsensor': gsensor,
                 'timestamp': timestamp,
-            });
-            var packSmall = msgpack.encode({
+            };
+            var packSmall = {
                 'state': state,
                 'heroPos': [hero.x, hero.y],
                 'radius': radius,
                 'monsterPos': [monster.x, monster.y],
-            });
+            };
 
             if( state==='' && Agent[now.mode] ) {
                 var force = Agent[now.mode](pack.monsterPos, pack.monsterSpeed, pack.heroPos, pack.heroSpeed, pack.radius);
@@ -115,8 +115,8 @@ connection.onopen = function (session) {
             now.game.next();
 
             if( now.game.checkUpdated() ) {
-                session.publish('server.'+roomName, [pack], {});
-                session.publish('server.observer.'+roomName, [packSmall], {});
+                session.publish('server.'+roomName, [msgpack.encode(pack)], {});
+                session.publish('server.observer.'+roomName, [msgpack.encode(packSmall)], {});
                 console.log(roomName, JSON.stringify(pack));
             }
             else {
