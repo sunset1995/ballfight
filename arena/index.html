@@ -6,6 +6,11 @@
 
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="https://autobahn.s3.amazonaws.com/autobahnjs/latest/autobahn.min.jgz"></script>
+    <!--[if lte IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.10/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+    <![endif]-->
+    <script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
 </head>
 <body>
     
@@ -105,10 +110,13 @@
             state = 'Let start!!';
 
             session.subscribe('server.observer.'+room, function(args, kwargs, details) {
-                state = kwargs.state || '';
-                radius = kwargs.radius || 0;
-                hero = kwargs.heroPos || [0, 0];
-                monster = kwargs.monsterPos || [0, 0];
+                var ret = msgpack.decode(args[0]);
+                console.log(args[0])
+                console.log(ret)
+                state = ret.state || '';
+                radius = ret.radius || 0;
+                hero = ret.heroPos || [0, 0];
+                monster = ret.monsterPos || [0, 0];
             });
             session.publish('joinRoom', [room], {});
 
