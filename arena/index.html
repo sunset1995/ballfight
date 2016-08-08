@@ -71,7 +71,12 @@
         heroDOM.style.transform = 'translate(%dpx, %dpx)'.replace('%d', oX+hero[0]).replace('%d', oY+hero[1]);
         monsterDOM.style.transform = 'translate(%dpx, %dpx)'.replace('%d', oX+monster[0]).replace('%d', oY+monster[1]);
         if( stateChange ) {
-            feedback.innerHTML = state;
+            if( state === 'win' )
+                feedback.innerHTML = 'Hero is winner!!!';
+            else if( state === 'lose' )
+                feedback.innerHTML = 'Hero is loser...';
+            else
+                feedback.innerHTML = state;
             feedbackBlock.style.display = (state==='')? 'none' : 'block';
         }
 
