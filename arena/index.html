@@ -104,7 +104,7 @@
             connected = true;
             state = 'Let start!!';
 
-            session.subscribe('server.'+room, function(args, kwargs, details) {
+            session.subscribe('server.observer.'+room, function(args, kwargs, details) {
                 state = kwargs.state || '';
                 radius = kwargs.radius || 0;
                 hero = kwargs.heroPos || [0, 0];
