@@ -122,6 +122,6 @@ api.play(strategy)
 <br>
 ## AI Trainer
 若你想要訓練你的 AI 玩這個遊戲：  
-- `api.play(strategy, True)` 將第二個參數改成 `True` 伺服器將會在遊戲結束後一秒鐘自動開始新遊戲  
+- `api.play(strategy, True)` 將第二個選擇性的參數設成 `True` 伺服器將會在遊戲結束後一秒鐘自動開始新遊戲  
 - 還是可以利用觀察者觀戰
 - 聯絡 TA `s2821d3721@gmail.com` 協助你私架此遊戲的伺服器
