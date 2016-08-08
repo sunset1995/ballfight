@@ -2,7 +2,6 @@ import sys
 import json
 import math
 import time
-import msgpack
 from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.wamp import ApplicationSession
@@ -51,12 +50,11 @@ class BallfightConnector(ApplicationSession):
         lastState = 'x'
         lastRemoteTimestamp = 0
         lastLocalTimestamp = 0
-        def stateChangeHandler(*args):
+        def stateChangeHandler(**kargs):
             nonlocal lastState
             nonlocal lastRemoteTimestamp
             nonlocal lastLocalTimestamp
             global data
-            kargs = msgpack.load(args[0])
             data = kargs
 
             if kargs['state'] != '':
