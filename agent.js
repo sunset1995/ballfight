@@ -21,7 +21,7 @@ function softer(myPos, mySpeed, enemyPos, enemySpeed, radius) {
 }
 
 function brownian(myPos, mySpeed, enemyPos, enemySpeed, radius) {
-    if( myPos[0]*myPos + myPos[1]*myPos[1] > (radius-25)*(radius-25))
+    if( myPos[0]*myPos[0] + myPos[1]*myPos[1] > (radius-25)*(radius-25))
         return [-myPos[0]*1000, -myPos[1]*1000];
 
     var theta = Math.random()*2*Math.PI;
