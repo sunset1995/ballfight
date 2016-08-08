@@ -20,6 +20,14 @@ function softer(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     return f;
 }
 
+function brownian(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+    if( myPos[0]*myPos + myPos[1]*myPos[1] > (radius-25)*(radius-25))
+        return [-myPos[0]*1000, -myPos[1]*1000];
+
+    var theta = Math.random()*2*Math.PI;
+    return [1000*Math.cos(theta), 1000*Math.sin(theta)];
+}
+
 function rusher(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
     var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
@@ -57,6 +65,7 @@ function centerCamper(myPos, mySpeed, enemyPos, enemySpeed, radius) {
 module.exports = {
     'loser': loser,
     'softer': softer,
+    'brownian': brownian,
     'rusher': rusher,
     'centerCamper': centerCamper,
 };
