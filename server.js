@@ -77,10 +77,9 @@ connection.onopen = function (session) {
     // Process each room
     var timestamp = Date.now();
     function judge() {
-        var nowTimestamp = Date.now();
+        timestamp = Date.now();
+        
         console.log('\033[2J');
-        console.log('actual elapse: ', nowTimestamp-timestamp, 'ms');
-        timestamp = nowTimestamp;
 
         Object.keys(room).forEach((roomName) => {
             var now = room[roomName];
@@ -98,7 +97,7 @@ connection.onopen = function (session) {
                 'monsterSpeed': [monster.vx, monster.vy],
                 'radius': radius,
                 'gsensor': gsensor,
-                'timestamp': nowTimestamp,
+                'timestamp': timestamp,
             };
 
             if( state==='' && Agent[now.mode] ) {
@@ -117,7 +116,11 @@ connection.onopen = function (session) {
             }
         });
 
-        setTimeout(judge, config.interval);
+        var procTime = Date.time() - timestamp;
+        console.log('process time:', procTime, 'ms');
+
+        var nextTime = config.interval - procTime
+        setTimeout(judge, nextTime>0? nextTime : 0);
     }
     judge();
 };
