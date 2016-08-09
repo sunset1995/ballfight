@@ -11,6 +11,8 @@ var connection = new autobahn.Connection({
 
 var room = {};
 
+var lastTimePublish = 0;
+
 
 
 // Define handler
@@ -116,12 +118,19 @@ connection.onopen = function (session) {
             if( now.game.checkUpdated() ) {
                 session.publish('server.'+roomName, [], pack);
                 session.publish('server.observer.'+roomName, [], packSmall);
+                lastTimePublish = Date.now();
                 console.log(roomName, JSON.stringify(pack));
             }
             else {
                 console.log(roomName, pack.state);
             }
         });
+
+        if( Date.now() - lastTimePublish >= config.maxTimeNoPublish ) {
+            session.publish('keep.me.alive', [], {});
+            console.log('send keep alive');
+            lastTimePublish = Date.now();
+        }
 
         var procTime = parseInt(Date.now() - timestamp, 10);
         console.log('process time:', procTime, 'ms');
