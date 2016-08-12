@@ -1,143 +1,124 @@
-// Init
-var autobahn = require('autobahn');
+// Include dependency
 var config = require('./config.js');
+var Connector = require('./connector');
 var Agent = require('./agent.js');
-var Game = require('./game.js');
+var GameProto = require('./game.js');
 
-var connection = new autobahn.Connection({
-    url: config.url,
-    realm: 'ballfight',
-});
-
-var room = {};
-
-var lastTimePublish = 0;
-
-
-
-// Define handler
-connection.onopen = function (session) {
-
-    console.log('Connection success');
+// Shared variable
+var game = new GameProto();
+var agent = null;
+var heroPos = [config.heroInit.x, config.heroInit.y];
+var heroSpeed = [config.heroInit.vx, config.heroInit.vy];
+var monsterPos = [config.monsterInit.x, config.monsterInit.y];
+var monsterSpeed = [config.monsterInit.vx, config.monsterInit.vy];
+var radius = config.radiusInit;
 
 
-    // Handle action in one room
-    function actionHandler(args, kwargs, details) {
-        var roomName = details.topic.slice(7);
-        if( !room[roomName] )
-            return;
+// Useful function
+function startGame(mode) {
+    game.init();
+    if( mode==='PVP' )
+        agent = null;
+    else if( Agent[mode] )
+        agent = Agent[mode];
+}
 
-        var action = args[0];
-        var data = args[1];
-        if( action === 'hero' )
-            room[roomName].game.applyForceToHero(data);
-        else if( action === 'monster' )
-            room[roomName].game.applyForceToMonster(data);
-        else if( action === 'start' )
-            room[roomName].game.start();
 
-        room[roomName].timestamp = Date.now();
+// Game panel
+var gamePanel = (function() {
+    var feedbackBlock = $('#game-panel')[0];
+    var feedback = $('#game-panel > strong')[0];
+
+    // Binding
+    $('#fight-trigger > button').click(function() {
+        var mode = $(this).attr('id').slice(4);
+        console.log('start with mode', mode);
+        startGame(mode);
+    });
+
+
+    return {
+        'show': function(str) {
+            feedback.innerHTML = str;
+            feedbackBlock.style.display = 'block';
+        },
+        'hide': function() {
+            feedbackBlock.style.display = 'none';
+        },
     }
+})();
 
 
-    // Handle join room request
-    // Create one if not room not yet exited
-    // No delete room machanic now
-    function joinRoomHandler(args, kwargs, details) {
-        var roomName = args[0];
-        var mode = args[1];
-        var autoStart = args[2];
-        if( !room[roomName] ) {
-            // Create new room
-            room[roomName] = {
-                game: new Game(),
-                mode: 'softer',
-                timestamp: Date.now(),
-            };
+// Coculate game term
+function termCoculation() {
+    game.applyForceToHero(Connector.getHeroAction());
+    if( agent )
+        game.applyForceToMonster(agent(monsterPos, monsterSpeed, heroPos, heroSpeed, radius))
+    else
+        game.applyForceToMonster(Connector.getMonsterAction());
 
-            // Listen for action in room
-            session.subscribe('player.'+roomName, actionHandler);
-        }
-        
-        if(typeof mode !== 'undefined')
-            room[roomName].mode = mode;
+    game.next();
+    heroPos = [game.hero.x, game.hero.y];
+    heroSpeed = [game.hero.vx, game.hero.vy];
+    monsterPos = [game.monster.x, game.monster.y];
+    monsterSpeed = [game.monster.vx, game.monster.vy];
+    radius = game.radius;
 
-        if(typeof autoStart !== 'undefined')
-            room[roomName].game.autoStart = autoStart;
-    }
-
-
-    // Listen for joinRoom
-    session.subscribe('joinRoom', joinRoomHandler);
-
-
-    // Process each room
-    var timestamp = Date.now();
-    function judge() {
-        timestamp = Date.now();
-
-        Object.keys(room).forEach((roomName) => {
-            var now = room[roomName];
-            var state = now.game.state;
-            var hero = now.game.hero;
-            var monster = now.game.monster;
-            var radius = now.game.radius;
-
-            var pack = {
-                'state': state,
-                'heroPos': [hero.x, hero.y],
-                'heroSpeed': [hero.vx, hero.vy],
-                'monsterPos': [monster.x, monster.y],
-                'monsterSpeed': [monster.vx, monster.vy],
-                'radius': radius,
-                'timestamp': timestamp,
-            };
-            var packSmall = {
-                'state': state,
-                'heroPos': [hero.x, hero.y],
-                'radius': radius,
-                'monsterPos': [monster.x, monster.y],
-            };
-
-            if( state==='' && Agent[now.mode] ) {
-                var force = Agent[now.mode](pack.monsterPos, pack.monsterSpeed, pack.heroPos, pack.heroSpeed, pack.radius);
-                now.game.applyForceToMonster(force);
-            }
-
-            now.game.next();
-
-            if( now.game.checkUpdated() ) {
-                session.publish('server.'+roomName, [], pack);
-                session.publish('server.observer.'+roomName, [], packSmall);
-                lastTimePublish = Date.now();
-                console.log(roomName, JSON.stringify(pack));
-            }
-            else {
-                console.log(roomName, pack.state);
-            }
+    if( game.state === '' )
+        Connector.publishState({
+            'heroPos': heroPos,
+            'heroSpeed': heroSpeed,
+            'monsterPos': monsterPos,
+            'monsterSpeed': monsterSpeed,
+            'radius': radius,
+            'timestamp': Date.now(),
         });
+}
+setInterval(termCoculation, config.interval);
 
-        if( Date.now() - lastTimePublish >= config.maxTimeNoPublish ) {
-            session.publish('keep.me.alive', [], {});
-            console.log('send keep alive');
-            lastTimePublish = Date.now();
-        }
 
-        var procTime = parseInt(Date.now() - timestamp, 10);
-        console.log('process time:', procTime, 'ms');
+// Coculate what to display on each frames
+var arenaDOM = $('#arena')[0];
+var heroDOM = $('#hero')[0];
+var monsterDOM = $('#monster')[0];
+var lastState = null;
 
-        var nextTime = parseInt(config.interval - procTime, 10);
-        setTimeout(judge, nextTime>0? nextTime : 0);
+function frameCoculation() {
+    if( !Connector.isConnect() ) {
+        gamePanel.show('Connecting to server...');
+        requestAnimationFrame(frameCoculation);
+        return;
     }
-    judge();
-};
 
-connection.onclose = function (reason, details) {
-   // connection closed, lost or unable to connect
-   console.log('Connection was closed due to:', reason);
-};
+    // read
+    var arena = arenaDOM.getBoundingClientRect();
+    var oX = document.body.getBoundingClientRect().width / 2;
+    var oY = document.body.getBoundingClientRect().height / 2;
+    var hX = oX + heroPos[0];
+    var hY = oY + heroPos[1];
+    var mX = oX + monsterPos[0];
+    var mY = oY + monsterPos[1];
 
+    // write
+    arenaDOM.style.width = (2*radius) + 'px';
+    arenaDOM.style.height = (2*radius) + 'px';
+    heroDOM.style.transform = 'translate('+hX+'px, '+hY+'px)';
+    heroDOM.style.transform = 'translate3d('+hX+'px, '+hY+'px, 0)';
+    monsterDOM.style.transform = 'translate('+mX+'px, '+mY+'px)';
+    monsterDOM.style.transform = 'translate3d('+mX+'px, '+mY+'px, 0)';
+    if( lastState!==game.state ) {
+        lastState = game.state;
+        if( game.state === '' )
+            gamePanel.hide();
+        else if( game.state === 'win' )
+            gamePanel.show('Hero is winner!!!');
+        else if( game.state === 'lose' )
+            gamePanel.show('Hero is loser...');
+        else
+            gamePanel.show(game.state);
+    }
 
-
-console.log('Connecting to server...');
-connection.open()
+    // next
+    requestAnimationFrame(frameCoculation);
+}
+requestAnimationFrame(frameCoculation);

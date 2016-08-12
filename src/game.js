@@ -5,28 +5,19 @@ var Ball = require('./ball.js');
 
 // Define game class
 var Game = function() {
-    this.autoStart = false;
     this.hero = new Ball();
     this.monster = new Ball();
-    this.start();
+    this.init();
     this.state = 'Let start!';
 };
 
-Game.prototype.start = function() {
+Game.prototype.init = function() {
     if( this.state === '' )
         return;
     this.hero.init(config.heroInit);
     this.monster.init(config.monsterInit);
     this.radius = config.radiusInit;
     this.state = '';
-
-    // To check updated or not
-    this.countDown = 100;
-    this.lastHeroX = 0;
-    this.lastHeroY = 0;
-    this.lastMonsterX = 0;
-    this.lastMonsterY = 0;
-    this.lastState = this.state;
 };
 
 Game.prototype.next = function() {
@@ -47,8 +38,7 @@ Game.prototype.next = function() {
 
     // Detect game over
     if( this.state !== '' ) {
-        if( this.autoStart )
-            this.start();
+        // Do nothing
     }
     else if( this.hero.distanceWithOrigin() > this.radius + 25 )
         this.state = 'lose';
@@ -61,41 +51,13 @@ Game.prototype.next = function() {
 };
 
 Game.prototype.applyForceToHero = function(force) {
-    if( this.state === '' && force )
+    if( this.state === '' )
         this.hero.applyForce(force);
 };
 
 Game.prototype.applyForceToMonster = function(force) {
-    if( this.state === '' && force )
+    if( this.state === '' )
         this.monster.applyForce(force);
-};
-
-Game.prototype.checkUpdated = function() {
-    if( this.state !== '' && --this.countDown < 0 )
-        return false;
-
-    var ret = false;
-    if( this.hero.x != this.lastHeroX ) {
-        this.lastHeroX = this.hero.x;
-        ret = true;
-    }
-    if( this.hero.y != this.lastHeroY ) {
-        this.lastHeroY = this.hero.y;
-        ret = true;
-    }
-    if( this.monster.x != this.lastMonsterX ) {
-        this.lastMonsterX = this.monster.x;
-        ret = true;
-    }
-    if( this.monster.y != this.lastMonsterY ) {
-        this.lastMonsterY = this.monster.y;
-        ret = true;
-    }
-    if( this.state != this.lastState ) {
-        this.lastState = this.state;
-        ret = true;
-    }
-    return ret;
 };
 
 

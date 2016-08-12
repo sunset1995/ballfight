@@ -50,7 +50,7 @@ html, body {
 
 
 /* Feedback panel */
-#feedback-info {
+#game-panel {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -58,11 +58,14 @@ html, body {
     transform: translate(-50%, -50%);
     text-align: center;
 }
-#feedback-info strong {
+#game-panel strong {
     display: block;
     font-size: 4em;
     color: rgb(133, 166, 177);
     text-shadow: 2px 2px white;
+}
+#fight-trigger {
+    display: none;
 }
 #start-fight {
     display: none;

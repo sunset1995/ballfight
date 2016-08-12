@@ -38,8 +38,6 @@ Ball.prototype.init = function(initValue) {
 };
 
 Ball.prototype.applyForce = function(force) {
-    if( typeof force !== 'object' )
-        return;
     force[0] = force[0] || 0;
     force[1] = force[1] || 0;
     var len = vectorLength(force);
