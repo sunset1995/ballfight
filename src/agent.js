@@ -1,0 +1,71 @@
+function loser(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+    var f = [-myPos[0], -myPos[1]];
+    var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
+    if( Math.abs(fLen) < 1 )
+        return f;
+    f[0] = f[0]*100/fLen - myPos[0];
+    f[1] = f[1]*100/fLen - myPos[1];
+    return f;
+}
+
+function softer(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+    var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
+    var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
+    if( Math.abs(fLen) < 1 )
+        return f;
+    f[0] /= fLen*0.022;
+    f[1] /= fLen*0.022;
+    f[0] += -enemySpeed[0] + Math.random()*50 - 25;
+    f[1] += -enemySpeed[1] + Math.random()*50 - 25;
+    return f;
+}
+
+function brownian(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+    if( myPos[0]*myPos[0] + myPos[1]*myPos[1] > (radius-25)*(radius-25))
+        return [-myPos[0]*1000, -myPos[1]*1000];
+
+    var theta = Math.random()*2*Math.PI;
+    return [1000*Math.cos(theta), 1000*Math.sin(theta)];
+}
+
+function rusher(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+    var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
+    var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
+    if( Math.abs(fLen) < 1 )
+        return f;
+    f[0] /= fLen;
+    f[1] /= fLen;
+    var disEnemy = fLen;
+    var disGG = radius - Math.sqrt(myPos[0]*myPos[0] + myPos[1]*myPos[1]);
+    if(disGG < 50) {
+        f[0] *= 1000;
+        f[1] *= 1000;
+    }
+    else if(disEnemy < 150) {
+        f[0] *= 500;
+        f[1] *= 500;
+    }
+    else {
+        f[0] *= 200;
+        f[1] *= 200;
+    }
+    return f;
+}
+
+function centerCamper(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+    var f = [-myPos[0], -myPos[1]];
+    fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]) + 0.01;
+    f[0] = f[0]*1000/fLen + Math.random()*10 - 20;
+    f[1] = f[1]*1000/fLen + Math.random()*10 - 20;
+    return f;
+}
+
+
+
+module.exports = {
+    'loser': loser,
+    'softer': softer,
+    'brownian': brownian,
+    'rusher': rusher,
+    'centerCamper': centerCamper,
+};
