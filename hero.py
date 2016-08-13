@@ -17,4 +17,4 @@ def strategy():
     return [-gsensor[0]*10, gsensor[1]*10]
 
 
-api.play('ws://localhost:8080/ws', 'yourname', strategy)
+api.play('ws://snp2016.nctu.me:8080/ws', 'yourname', strategy)
