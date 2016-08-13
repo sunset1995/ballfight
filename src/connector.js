@@ -28,6 +28,7 @@ function isConnect() {
 $('#url').val('ws://'+location.hostname+':8080/ws');
 $('#connect').click(function() {
     $('#connect-panel')[0].style.display = 'none';
+    $('#game-panel')[0].style.opacity = '1';
 
     var connection = new autobahn.Connection({
         url: $('#url').val(),
@@ -52,25 +53,23 @@ $('#connect').click(function() {
 
 
         function heroActionHandler(args, kwargs, details) {
-            console.log(args, kwargs, details);
             var force = args[0];
             if( typeof force === 'object' && 
                     typeof force[0] === 'number' && 
                     typeof force[1] === 'number' )
                 heroAction = force;
         }
-        session.subscribe(roomName+'.hero', heroActionHandler);
+        session.subscribe(roomname+'.hero', heroActionHandler);
 
 
         function monsterActionHandler(args, kwargs, details) {
-            console.log(args, kwargs, details);
             var force = args[0];
             if( typeof force === 'object' && 
                     typeof force[0] === 'number' && 
                     typeof force[1] === 'number' )
                 monsterAction = force;
         }
-        session.subscribe(roomName+'.monster', monsterActionHandler);
+        session.subscribe(roomname+'.monster', monsterActionHandler);
     };
 
 

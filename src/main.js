@@ -7,6 +7,7 @@ var GameProto = require('./game.js');
 // Shared variable
 var game = new GameProto();
 var agent = null;
+var state = 'init';
 var heroPos = [config.heroInit.x, config.heroInit.y];
 var heroSpeed = [config.heroInit.vx, config.heroInit.vy];
 var monsterPos = [config.monsterInit.x, config.monsterInit.y];
@@ -58,14 +59,17 @@ function termCoculation() {
         game.applyForceToMonster(Connector.getMonsterAction());
 
     game.next();
+    var stateChange = game.state !== state;
+    state = game.state;
     heroPos = [game.hero.x, game.hero.y];
     heroSpeed = [game.hero.vx, game.hero.vy];
     monsterPos = [game.monster.x, game.monster.y];
     monsterSpeed = [game.monster.vx, game.monster.vy];
     radius = game.radius;
 
-    if( game.state === '' )
+    if( game.state === '' || stateChange )
         Connector.publishState({
+            'state': game.state,
             'heroPos': heroPos,
             'heroSpeed': heroSpeed,
             'monsterPos': monsterPos,
@@ -84,12 +88,6 @@ var monsterDOM = $('#monster')[0];
 var lastState = null;
 
 function frameCoculation() {
-    if( !Connector.isConnect() ) {
-        gamePanel.show('Connecting to server...');
-        requestAnimationFrame(frameCoculation);
-        return;
-    }
-
     // read
     var arena = arenaDOM.getBoundingClientRect();
     var oX = document.body.getBoundingClientRect().width / 2;
@@ -106,7 +104,9 @@ function frameCoculation() {
     heroDOM.style.transform = 'translate3d('+hX+'px, '+hY+'px, 0)';
     monsterDOM.style.transform = 'translate('+mX+'px, '+mY+'px)';
     monsterDOM.style.transform = 'translate3d('+mX+'px, '+mY+'px, 0)';
-    if( lastState!==game.state ) {
+    if( !Connector.isConnect() )
+        gamePanel.show('Connection closed');
+    else if( lastState!==game.state ) {
         lastState = game.state;
         if( game.state === '' )
             gamePanel.hide();
