@@ -10,10 +10,11 @@ def strategy():
     arenaR = api.getArenaRadius()
     gsensor = api.getGsensor()
 
-    return [-gsensor[0], gsensor[1]]
+    if state!='':
+        # Win or lose
+        print(state)
+
+    return [-gsensor[0]*10, gsensor[1]*10]
 
 
-api.setRoom('yourname')
-api.setMonster('softer')
-
-api.play(strategy)
+api.play('ws://localhost:8080/ws', 'yourname', strategy)

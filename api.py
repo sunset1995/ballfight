@@ -7,9 +7,7 @@ from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.wamp import ApplicationSession
 from autobahn.twisted.wamp import ApplicationRunner
 
-url = 'ws://wamp-router-sunset1995.c9users.io:8080/ws'
 roomName = 'default'
-mode = 'softer'
 role = 'hero'
 agent = lambda: [0, 0]
 data = {
@@ -21,7 +19,6 @@ data = {
     'radius': 0,
     'gsensor': [0, 0],
 }
-autoStart = False
 
 
 
@@ -33,16 +30,9 @@ class BallfightConnector(ApplicationSession):
         print("Connection success")
         print("Setting game ...")
 
-        stateTopic = 'server.%s' % (roomName)
-        actionTopic = 'player.%s' % (roomName)
-
-
-
-        try:
-            yield self.publish(u'joinRoom', roomName, mode, autoStart)
-        except Exception as e:
-            print("fail to join room")
-            sys.exit(0)
+        actionTopic = '%s.%s' % (roomName, role)
+        stateTopic = '%s.arena' % (roomName)
+        gsensorTopic = '%s.gsensor.%s' % (roomName, role)
 
 
         # Used to check whether time elapse too long within same state
@@ -55,7 +45,7 @@ class BallfightConnector(ApplicationSession):
             nonlocal lastRemoteTimestamp
             nonlocal lastLocalTimestamp
             global data
-            data = kargs
+            data.update(kargs)
 
             if kargs['state'] != '':
                 if lastState != 'non-fight':
@@ -75,13 +65,20 @@ class BallfightConnector(ApplicationSession):
             force = agent()
             if not isinstance(force, list) or len(force)!=2:
                 print('You should give me [fx, fy]')
-                print('But you give me ', force)
+                print('But you give me ', type(force), force)
                 sys.exit(0)
             else:
-                self.publish(actionTopic, role, force)
+                self.publish(actionTopic, force)
+
+
+        def gsensorChange(*args):
+            global data
+            data['gsensor'] = list(args)
+
 
         try:
             yield self.subscribe(stateChangeHandler, stateTopic)
+            yield self.subscribe(gsensorChange, gsensorTopic)
         except Exception as e:
             print("fail to subscribe")
             sys.exit(0)
@@ -140,33 +137,17 @@ def getGsensor():
 
 
 # Connection api
-def setUrl(newurl):
-    global url
-    url = newurl
-
-def setRoom(rname):
-    global roomName
-    roomName = rname
-
-def setMonster(monster):
-    global mode
+def setRole(monster):
+    # Work when PVP
     global role
-    mode = monster
     role = 'hero'
 
-def setPVP(r):
-    global mode
-    global role
-    mode = 'PVP'
-    role = r
-
-def play(strategy, auto=False):
+def play(url, rname, strategy):
     global agent
-    global autoStart
+    global roomName
 
     agent = strategy
-    if auto:
-        autoStart = True
+    roomName = rname
     
     print("Connecting to server %s ..." % (url))
     runner = ApplicationRunner(url=url, realm=u"ballfight")
