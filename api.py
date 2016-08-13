@@ -75,8 +75,7 @@ class BallfightConnector(ApplicationSession):
 
         try:
             yield self.subscribe(stateChangeHandler, stateTopic)
-            if role=='hero':
-                yield self.subscribe(gsensorChange, gsensorTopic)
+            yield self.subscribe(gsensorChange, gsensorTopic)
         except Exception as e:
             print("fail to subscribe")
             sys.exit(0)
