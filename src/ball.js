@@ -4,7 +4,7 @@ var config = require('./config.js');
 
 // Define self used function
 function floorEPS(lf) {
-    return Math.floor(lf*10) / 10;
+    return Math.round(lf*10) / 10;
 }
 function dot(v1, v2) {
     return v1[0]*v2[0] + v1[1]*v2[1];

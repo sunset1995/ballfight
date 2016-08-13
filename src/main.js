@@ -75,7 +75,6 @@ function termCoculation() {
             'monsterPos': monsterPos,
             'monsterSpeed': monsterSpeed,
             'radius': radius,
-            'timestamp': Date.now(),
         });
 }
 setInterval(termCoculation, config.interval);
