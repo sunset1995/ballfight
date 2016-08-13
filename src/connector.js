@@ -7,10 +7,8 @@ var heroAction = [0, 0];
 var monsterAction = [0, 0];
 
 function publishState(state) {
-    if( session ) {
-        console.log(roomname+'.arena', state)
+    if( session )
         session.publish(roomname+'.arena', [], state);
-    }
 }
 
 function getHeroAction() {

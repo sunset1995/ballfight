@@ -61,6 +61,11 @@ Ball.prototype.next = function() {
         this.vy *= config.maxSpeed / len;
     }
 
+    this.x = floorEPS(this.x);
+    this.y = floorEPS(this.y);
+    this.vx = floorEPS(this.vx);
+    this.vy = floorEPS(this.vy);
+
     var fr = friction([this.vx, this.vy], this.k);
     this.ax = this.fx + fr[0];
     this.ay = this.fy + fr[1];
