@@ -20,10 +20,13 @@
             <label>room</label>
             <input type="text" id="room" value="yourname">
         </section>
-        <button id="connect">Submit</button>
+        <section>
+            <button id="connect-hero">Hero</button>
+            <button id="connect-monster">Monster</button>
+        </section>
     </div>
 
-    <div id="feedback-info">
+    <div id="game-panel">
         <strong></strong>
     </div>
 
@@ -36,11 +39,14 @@
         })();
     </script>
     <script>
-    document.getElementById('feedback-info').style.block = 'block';
-    var feedback = document.querySelector('#feedback-info > strong');
+    document.getElementById('game-panel').style.display = 'block';
+    document.getElementById('game-panel').style.opacity = '1';
+    document.getElementById('url').value = 'ws://'+location.hostname+':8080/ws';
+    var feedback = document.querySelector('#game-panel > strong');
 
     var url = '';
     var room = '';
+    var player = 'hero';
     var session = null;
     var connected = false;
     function connect() {
@@ -68,7 +74,11 @@
 
         connection.open();
     }
-    document.getElementById('connect').onclick = connect;
+    document.getElementById('connect-hero').onclick = connect;
+    document.getElementById('connect-monster').onclick = function() {
+        player = 'monster';
+        connect();
+    };
 
 
 
@@ -78,21 +88,21 @@
         gsensor[0] = event.accelerationIncludingGravity.x || 0;  
         gsensor[1] = event.accelerationIncludingGravity.y || 0;
 
-        gsensor[0] = parseInt(gsensor[0]*100, 10);
-        gsensor[1] = parseInt(gsensor[1]*100, 10);
+        gsensor[0] = parseInt(gsensor[0]*10, 10);
+        gsensor[1] = parseInt(gsensor[1]*10, 10);
     }
 
 
 
     // sender
-    var interval = 30;
+    var interval = 50;
     var lastTimestamp = null;
     function sender(timestamp) {
         if( lastTimestamp===null )
             lastTimestamp = timestamp;
 
         if( timestamp-lastTimestamp > interval && connected ) {
-            session.publish('player.'+room, ['gsensor', gsensor], {});
+            session.publish(room+'.gsensor.'+player, gsensor, {});
             feedback.innerHTML = gsensor[0] + '<br>' + gsensor[1];
             lastTimestamp = timestamp;
         }

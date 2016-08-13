@@ -138,10 +138,8 @@ html, body {
     border-radius: 3px;
 }
 
-#connect {
-    display: block;
+#connect-panel button {
     font-size: 1em;
-    margin: 2em auto 0 auto;
     padding: .5em 1em;
     text-align: center;
     background-color: #7fb959;
@@ -149,4 +147,13 @@ html, body {
     border: 0;
     border-radius: 3px;
     cursor: pointer;
+    margin: 2em auto 0 auto;
+}
+
+#connect {
+    display: block;
+}
+button#connect-hero,
+button#connect-monster {
+    margin: 1em 1em 0 1em;
 }
