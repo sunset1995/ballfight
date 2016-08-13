@@ -75,7 +75,8 @@ class BallfightConnector(ApplicationSession):
 
         try:
             yield self.subscribe(stateChangeHandler, stateTopic)
-            yield self.subscribe(gsensorChange, gsensorTopic)
+            if role=='hero':
+                yield self.subscribe(gsensorChange, gsensorTopic)
         except Exception as e:
             print("fail to subscribe")
             sys.exit(0)
@@ -134,10 +135,11 @@ def getGsensor():
 
 
 # Connection api
-def setRole(monster):
+def playMonster(url, rname, strategy):
     # Work when PVP
     global role
-    role = 'hero'
+    role = 'monster'
+    play(url, rname, strategy)
 
 def play(url, rname, strategy):
     global agent
