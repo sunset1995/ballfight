@@ -1,6 +1,6 @@
 module.exports = {
     // Network related
-    interval: 30,
+    interval: 1000 / 25,
 
     // Game related
     radiusInit: 350,
@@ -27,7 +27,7 @@ module.exports = {
     },
 
     // Physical engine related
-    unitTime: 0.02,
+    unitTime: 0.025,
     maxForce: 1000,
     maxSpeed: 500,
 };
