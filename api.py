@@ -38,11 +38,9 @@ class BallfightConnector(ApplicationSession):
         # Used to check whether time elapse too long within same state
         # For fear that user registed agent take too long time and flood the receive queue
         lastState = 'x'
-        lastRemoteTimestamp = 0
         lastLocalTimestamp = 0
         def stateChangeHandler(**kargs):
             nonlocal lastState
-            nonlocal lastRemoteTimestamp
             nonlocal lastLocalTimestamp
             global data
             data.update(kargs)
@@ -54,13 +52,12 @@ class BallfightConnector(ApplicationSession):
                 return
 
             nowLocal = math.floor(time.time() * 1000)
-            eps = nowLocal + (lastRemoteTimestamp - lastLocalTimestamp) - kargs['timestamp']
+            eps = nowLocal - lastLocalTimestamp
+            lastLocalTimestamp = nowLocal
             skip = eps > 50 and lastState=='fighting'
             if skip:
                 return
             lastState = 'fighting'
-            lastRemoteTimestamp = kargs['timestamp']
-            lastLocalTimestamp = nowLocal
 
             force = agent()
             if not isinstance(force, list) or len(force)!=2:
