@@ -22,7 +22,7 @@
 
 <br>
 ## 架構圖
-[](images/architecture.png)  
+![](images/architecture.png)  
 手機，競技場，hero 都會加入伺服器的某個 room。  
 - 紫色資料流：手機重力感應器的資訊透過伺服器傳給 hero
 - 藍色資料流：瀏覽器裡的競技場與怪物更新了場面狀態，透過伺服器傳給 hero
