@@ -1,5 +1,13 @@
 # SNP 期末專題 - Ballfight
 
+傳送門：
+- [hero 程式壓縮檔](http://snp2016.nctu.me/ballfight.zip)
+- [競技場](http://snp2016.nctu.me/)
+- [重力感應器](http://snp2016.nctu.me/gsensor.html)
+
+
+
+<br>
 ## 勝負條件
 - 競技場(黑色範圍)含有英雄(綠球)與怪物(紅球)
 - 當有一方整顆球超出競技場外遊戲結束
@@ -34,12 +42,12 @@ _FYI_：一個 room 在手機，競技場，hero 進行遊戲時，伺服器的�
 
 <br>
 ## 開始前
-資料夾含有
+下載 [hero 程式壓縮檔](http://snp2016.nctu.me/ballfight.zip)。資料夾含有：
 - _api.py_：裡面實作了連線與取得場面資訊的函數
 - _requirement.txt_：寫了 _api.py_ 所需要的套件
 - _hero.py_：範例程式碼，你們需要實作的部分
 
-將上面三個檔案下載到同一個資料夾，然後在黑盒子(terminal)進入該資料夾使用 pip 指令下載所需套件：
+將上面三個檔案放到同一個資料夾，然後在黑盒子(terminal)進入該資料夾使用 pip 指令下載所需套件：
 ```
 pip3 install -r requirement.txt
 ```
@@ -123,6 +131,7 @@ api.play('ws://snp2016.nctu.me:8080/ws', 'yourname', strategy)
 若想要使用手機的重力感應器，請連上[此](http://snp2016.nctu.me/gsensor.html)。設定同上。  
 平常請按左邊的 _hero_ 按鈕。只有當 PVP 時，扮演 monster 的那方需按下右邊的 _monster_ 按鈕以將資料改傳給 monster。  
 若沒有連上的話 `api.getGsensor()` 的結果將為 `[0, 0]`。  
+> 因為瀏覽器讀取重力個應器的 feature 尚不是廣泛支援。若連線後，手機重力感應器的資訊總是為 0，請換個瀏覽器或手機平台試試  
 
 
 
