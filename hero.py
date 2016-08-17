@@ -14,7 +14,7 @@ def strategy():
         # Win or lose
         print(state)
 
-    return [-gsensor[0]*10, gsensor[1]*10]
+    return [-100, -100]
 
 
 api.play('ws://snp2016.nctu.me:8080/ws', 'yourname', strategy)
