@@ -1,14 +1,13 @@
 # SNP 期末專題 - Ballfight
 
-![](images/arena.png)  
-
+![競技場螢幕截圖](images/arena.png)  
 遊戲有三個元件：
 - [競技場](http://snp2016.nctu.me/)：請用電腦瀏覽器打開，為遊戲進行的場所
 - hero.py：控制競技場中的英雄，讓他在遊戲中獲勝
-    - [windows 安裝教學](install/ballfight-windows.md)
-    - [mac 安裝教學](install/ballfight-mac.md)
-    - [ubuntu 安裝教學](install/ballfight-ubuntu.md)
-    - [c9 安裝教學](install/ballfight-c9.md)
+    - [在 windows 上](install/ballfight-windows.md)
+    - [在 mac 上](install/ballfight-mac.md)
+    - [在 ubuntu 上](install/ballfight-ubuntu.md)
+    - [在 c9 上](install/ballfight-c9.md)
 - [手機重力感應器](http://snp2016.nctu.me/gsensor.html)：這個為非必要的元件。若你想要用手機協助競技場中的英雄，請用手機瀏覽器開啟該網頁，該網頁會把手機的重力資訊傳給 _hero.py_，讓你可以利用收到的重力感應器資訊做決策。
 
 
@@ -16,7 +15,7 @@
 
 
 
-<br>
+
 ## 勝負條件
 - 競技場(黑色範圍)含有英雄(綠球)與怪物(紅球)
 - 當有一方整顆球超出競技場外遊戲結束
@@ -24,7 +23,7 @@
 
 
 
-<br>
+
 ## 遊戲規則
 - 雙方能做的的操作只有對自己的球施予 `[fx, fy]` 的力
 - 球的移動會受到與速度方向相反的摩差力影響
@@ -37,9 +36,9 @@
 
 
 
-<br>
+
 ## 架構圖
-![](images/architecture.png)  
+![架構圖](images/architecture.png)  
 手機，競技場，hero 都會加入伺服器的某個 room。  
 - 紫色資料流：手機重力感應器的資訊透過伺服器傳給 hero
 - 藍色資料流：瀏覽器裡的競技場與怪物更新了場面狀態，透過伺服器傳給 hero
@@ -49,7 +48,7 @@ _FYI_：一個 room 在手機，競技場，hero 進行遊戲時，伺服器的�
 
 
 
-<br>
+
 ## 開始吧！
 
 
@@ -94,21 +93,20 @@ api.play('ws://snp2016.nctu.me:8080/ws', 'yourname', strategy)
 
 連線：  
 `api.play('ws://snp2016.nctu.me:8080/ws', 'yourname', strategy)`  
-- 第一個參數 `ws://snp2016.nctu.me:8080/ws` 代表伺服器位置
+- 第一個參數 `ws://snp2016.nctu.me:8080/ws` 代表伺服器 url
 - 第二個參數 `yourname` 代表對戰的 room
 - 第三個參數 `strategy` 為上面實作的遊戲策略
 - 不同伺服器或不同 room 的遊戲不會相互影響到
-- 此伺服器為 TA 的伺服器，若無法連線請聯絡 `s2821d3721@gmail.com`
 - __注意__ 此行以下的程式碼將不會被執行
 
 
-在黑盒子(terminal)執行 `python3 hero.py` 以執行 hero。
+在黑盒子(terminal)進入 _hero.py_ 所在資料夾，執行 `python3 hero.py` 以執行 hero。
 
 
 ### 競技場
 到此為止已實作好英雄的程式，接者打開瀏覽器連上[競技場](http://snp2016.nctu.me/)  
 連上後 _Connection setting_ 的部分請填上英雄一樣的伺服器與 room： 
-- url：已預設填上 TA 的伺服器，可以不用動這邊
+- url：已預設填上 TA 伺服器的 url，可以不用動這邊
 - room：請填上剛剛英雄進去的 room
 
 
@@ -125,11 +123,11 @@ api.play('ws://snp2016.nctu.me:8080/ws', 'yourname', strategy)
 若想要使用手機的重力感應器，請連上[此](http://snp2016.nctu.me/gsensor.html)。設定同上。  
 平常請按左邊的 _hero_ 按鈕。只有當 PVP 時，扮演 monster 的那方需按下右邊的 _monster_ 按鈕以將資料改傳給 monster。  
 若沒有連上的話 `api.getGsensor()` 的結果將為 `[0, 0]`。  
-> 因為瀏覽器讀取重力個應器的 feature 尚不是廣泛支援。若連線後，手機重力感應器的資訊總是為 0，請換個瀏覽器或手機平台試試  
+> 因為瀏覽器讀取重力感應器的功能尚不是廣泛支援。若連線後，手機重力感應器的資訊總是為 0，請換個瀏覽器或手機平台試試  
 
 
 
-<br>
+
 ## PVP
 可讓一支程式扮演 monster 相互對戰。  
 1. api 的使用方式同單人遊戲。  
@@ -139,7 +137,7 @@ api.play('ws://snp2016.nctu.me:8080/ws', 'yourname', strategy)
 
 
 
-<br>
+
 ## AI Trainer
 若你想要訓練你的 AI 玩這個遊戲：  
 - 聯絡 TA `s2821d3721@gmail.com` 協助你私架此遊戲的伺服器
