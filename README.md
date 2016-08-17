@@ -1,9 +1,18 @@
 # SNP 期末專題 - Ballfight
 
-傳送門：
-- [hero 程式壓縮檔](http://snp2016.nctu.me/ballfight.zip)
-- [競技場](http://snp2016.nctu.me/)
-- [重力感應器](http://snp2016.nctu.me/gsensor.html)
+![](images/arena.png)  
+
+遊戲有三個元件：
+- [競技場](http://snp2016.nctu.me/)：請用電腦瀏覽器打開，為遊戲進行的場所
+- hero.py：控制競技場中的英雄，讓他在遊戲中獲勝
+    - [window 安裝教學](install/ballfight-ubuntu.md)
+    - [mac 安裝教學](install/ballfight-mac.md)
+    - [ubuntu 安裝教學](install/ballfight-ubuntu.md)
+    - [c9 安裝教學](install/ballfight-c9.md)
+- [手機重力感應器](http://snp2016.nctu.me/gsensor.html)：這個為非必要的元件。若你想要用手機協助競技場中的英雄，請用手機瀏覽器開啟該網頁，該網頁會把手機的重力資訊傳給 _hero.py_，讓你可以利用收到的重力感應器資訊做決策。
+
+
+有任何問題請用力地把信寄給 `s2821d3721@gmail.com`
 
 
 
@@ -37,21 +46,6 @@
 - 橘色資料流：你實作的 hero.py 利用我們提供的 api 取得各種資訊後，以此算出你想要的施力，再透過 api 將施力大小透過伺服器傳給競技場
 
 _FYI_：一個 room 在手機，競技場，hero 進行遊戲時，伺服器的網路負擔約為進出各 5KB/s
-
-
-
-<br>
-## 開始前
-下載 [hero 程式壓縮檔](http://snp2016.nctu.me/ballfight.zip)。資料夾含有：
-- _api.py_：裡面實作了連線與取得場面資訊的函數
-- _requirement.txt_：寫了 _api.py_ 所需要的套件
-- _hero.py_：範例程式碼，你們需要實作的部分
-
-將上面三個檔案放到同一個資料夾，然後在黑盒子(terminal)進入該資料夾使用 pip 指令下載所需套件：
-```
-pip3 install -r requirement.txt
-```
-完成後即可開始編輯 _hero.py_ 囉～
 
 
 
