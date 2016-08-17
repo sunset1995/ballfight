@@ -5,7 +5,7 @@
 遊戲有三個元件：
 - [競技場](http://snp2016.nctu.me/)：請用電腦瀏覽器打開，為遊戲進行的場所
 - hero.py：控制競技場中的英雄，讓他在遊戲中獲勝
-    - [window 安裝教學](install/ballfight-ubuntu.md)
+    - [windows 安裝教學](install/ballfight-windows.md)
     - [mac 安裝教學](install/ballfight-mac.md)
     - [ubuntu 安裝教學](install/ballfight-ubuntu.md)
     - [c9 安裝教學](install/ballfight-c9.md)
