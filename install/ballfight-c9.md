@@ -37,7 +37,7 @@ WAMP router started at: ws://ballfight-sunset1995.c9users.io:8080/ws
 
 ## 編輯並執行 hero.py
 ### 編輯
-你已在上方的 panel 點擊 _hero.py_ 分頁開始編輯  
+在上方的 panel 點擊 _hero.py_ 分頁開始編輯  
 ![](../images/c9-edit-hero.png)  
 請記得把
 ```
