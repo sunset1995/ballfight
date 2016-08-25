@@ -15,3 +15,12 @@ sudo pip3 install -r requirements.txt
 /opt/crossbar/bin/crossbar init
 cat .crossbar/config.json | sed 's/realm1/ballfight/g' > __crossbar.config
 mv __crossbar.config .crossbar/config.json
+mkdir -p .c9/runners
+echo '{
+    "cmd" : ["/opt/crossbar/bin/crossbar", "start", "--cbdir", "$project_path/.crossbar"],
+    "info" : "Ballfight wamp router started at: ws://$hostname:$port/ws"
+}' > .c9/runners/crossbar.run
+if [ ! -f /usr/local/bin/crossbar ]; then
+    sudo ln -s /opt/crossbar/bin/crossbar /usr/local/bin/crossbar
+fi
+echo "Done~~"
