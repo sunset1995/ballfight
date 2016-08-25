@@ -37,11 +37,11 @@ function rusher(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     f[1] /= fLen;
     var disEnemy = fLen;
     var disGG = radius - Math.sqrt(myPos[0]*myPos[0] + myPos[1]*myPos[1]);
-    if(disGG < 50) {
+    if(disGG < 100) {
         f[0] *= 1000;
         f[1] *= 1000;
     }
-    else if(disEnemy < 150) {
+    else if(disEnemy < 200) {
         f[0] *= 500;
         f[1] *= 500;
     }
