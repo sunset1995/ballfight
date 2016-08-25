@@ -23,4 +23,5 @@ echo '{
 if [ ! -f /usr/local/bin/crossbar ]; then
     sudo ln -s /opt/crossbar/bin/crossbar /usr/local/bin/crossbar
 fi
+pip3 install -r requirements.txt
 echo "Done~~"
