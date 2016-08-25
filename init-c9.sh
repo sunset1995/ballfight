@@ -17,7 +17,7 @@ cat .crossbar/config.json | sed 's/realm1/ballfight/g' > __crossbar.config
 mv __crossbar.config .crossbar/config.json
 mkdir -p .c9/runners
 echo '{
-    "cmd" : ["/opt/crossbar/bin/crossbar", "start", "--cbdir", "$project_path/.crossbar"],
+    "cmd" : ["crossbar", "start", "--cbdir", "$project_path/.crossbar"],
     "info" : "Ballfight wamp router started at: ws://$hostname:$port/ws"
 }' > .c9/runners/crossbar.run
 if [ ! -f /usr/local/bin/crossbar ]; then

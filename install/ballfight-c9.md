@@ -29,9 +29,8 @@
 ![](../images/c9-5.png)  
 打開 _hero.py_ 後就可以開始 Coding 了！  
 有以下方法可以執行 _hero.py_：  
-1. 按鍵盤上的 `F5` 鍵（Mac 請按 `fn + F5`）  
-2. 按下畫面中最上方寫有 _run_ 的綠色按鈕  
-3. 開啟 Terminal(黑盒子) 並輸入 `python3 hero.py`  
+1. 按下畫面中最上方寫有 _run_ 的綠色按鈕（之後就可以使用鍵盤上的 `F5` 鍵執行（Mac 請按 `fn + F5`））  
+2. 開啟 Terminal(黑盒子) 並輸入 `python3 hero.py`  
 
 若你用方法 1 或 2 執行，應該會看到以下 SyntaxError    
 ![](../images/c9-6.png)  
