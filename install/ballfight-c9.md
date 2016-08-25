@@ -20,7 +20,7 @@
     ![](../images/c9-2.png)  
 5. 按 _綠色的 +_ 按鈕然後選擇 _New Terminal_（見下圖），開啟新 Terminal(黑盒子)  
     ![](../images/c9-3.png)  
-6. 在 Terminal 輸入 `sudo ./init-c9.sh`（如下圖）並按下 enter 執行。其中已包含 `sudo pip3 install -r requirements.txt` 把 _hero.py_ 所需套件裝好。  
+6. 在 Terminal 輸入 `./init-c9.sh`（如下圖）並按下 enter 執行。其中已包含 `sudo pip3 install -r requirements.txt` 把 _hero.py_ 所需套件裝好。  
     ![](../images/c9-4.png)  
 
 
