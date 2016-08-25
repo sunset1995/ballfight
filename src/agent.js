@@ -49,6 +49,7 @@ function rusher(myPos, mySpeed, enemyPos, enemySpeed, radius) {
         f[0] *= 200;
         f[1] *= 200;
     }
+    f[0] += Math.random()*100 - 50
     return f;
 }
 
