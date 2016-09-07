@@ -5,7 +5,6 @@ var babel = require('gulp-babel');
 
 
 
-
 gulp.task('default', function(){
     return gulp.src('src/main.js')
         .pipe(browserify())
@@ -14,7 +13,7 @@ gulp.task('default', function(){
             compact: true,
         }))
         .pipe(uglify())
-        .pipe(gulp.dest('app/'));
+        .pipe(gulp.dest('./'));
 });
 
 gulp.task('debug', function(){
@@ -26,5 +25,5 @@ gulp.task('debug', function(){
             presets: ['es2015'],
             compact: false,
         }))
-        .pipe(gulp.dest('app/'));
+        .pipe(gulp.dest('./'));
 });
