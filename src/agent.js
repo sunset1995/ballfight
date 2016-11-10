@@ -80,7 +80,7 @@ module.exports['Escaper'] = function(me, friend, enemy1, enemy2, radius) {
     var mySpeed = [me.vx, me.vy];
     var enemyPos = [enemy1.x, enemy1.y];
     var enemySpeed = [enemy1.vx, enemy1.vy];
-    if( dis(enemy1, my) > dis(enemy2, my) ) {
+    if( dis(enemy1, me) > dis(enemy2, me) ) {
         enemyPos = [enemy2.x, enemy2.y];
         enemySpeed = [enemy2.vx, enemy2.vy];
     }
