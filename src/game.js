@@ -61,7 +61,7 @@ Game.prototype.next = function() {
 };
 
 Game.prototype.applyForce = function(force, id) {
-    if( this.state === 'Playing' && id < 4 )
+    if( this.state === 'Playing' && typeof force === 'object' )
         this.players[id].applyForce(force);
 };
 

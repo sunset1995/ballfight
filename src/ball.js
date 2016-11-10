@@ -13,7 +13,7 @@ function vectorLength(v) {
     return Math.sqrt(dot(v, v));
 }
 function friction(v, k) {
-    k = k || 1;
+    k = k || 0;
     return [-v[0]*k, -v[1]*k];
 }
 

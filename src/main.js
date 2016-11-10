@@ -5,39 +5,53 @@ var config = require('./config.js');
 var Connector = require('./connector');
 var Agent = require('./agent.js');
 var GameProto = require('./game.js');
-var keyboard = require('./keyboard.js');
 
 // Shared variable
 window.game = new GameProto();
-window.gameResult = gameResult;
 
 
 
 // Coculate game term
 function termCoculation() {
-    /*
-    game.applyForceToHero(Connector.getHeroAction());
-    if( agent )
-        game.applyForceToMonster(agent(monsterPos, monsterSpeed, heroPos, heroSpeed, radius))
-    else
-        game.applyForceToMonster(Connector.getMonsterAction());
-    */
 
-    var f = [0, 0];
-    if( keyboard.d ) f[0] += 300;
-    if( keyboard.a ) f[0] -= 300;
-    if( keyboard.s ) f[1] += 300;
-    if( keyboard.w ) f[1] -= 300;
-    if( keyboard.space ) f[0] *= 3, f[1] *= 3;
-    window.game.applyForce(f, 0);
-    f = [0, 0];
-    if( keyboard.right ) f[0] += 300;
-    if( keyboard.left ) f[0] -= 300;
-    if( keyboard.down ) f[1] += 300;
-    if( keyboard.up ) f[1] -= 300;
-    if( keyboard.enter ) f[0] *= 3, f[1] *= 3;
-    window.game.applyForce(f, 2);
+    // Next term
     window.game.next();
+
+    var state = {
+        players: [],
+        radius: window.game.radius,
+    }
+    for(var i=0; i<4; ++i)
+        state.players.push({
+            x: window.game.players[i].x,
+            y: window.game.players[i].y,
+            vx: window.game.players[i].vx,
+            vy: window.game.players[i].vy,
+        });
+
+    for(var i=0; i<4; ++i) {
+        if( !selectionPanel.players[i] )
+            continue;
+        try {
+            var agentInfo = selectionPanel.players[i];
+            var force = [0, 0];
+            if( agentInfo.type === 'local-agent' ) {
+                var me = state.players[i];
+                var friend = state.players[2*Math.floor(i/2) + (i%2 ^ 1)];
+                var enemy1 = state.players[2*(Math.floor(i/2) ^ 1)];
+                var enemy2 = state.players[2*(Math.floor(i/2) ^ 1) + 1];
+                var radius = state.radius;
+                force = Agent[agentInfo.name](me, friend, enemy1, enemy2, radius);
+            }
+            else {
+                //
+            }
+            game.applyForce(force, i);
+        }
+        catch(err) {
+            console.error('Agent error', err);
+        }
+    }
 
     /*
     var stateChange = game.state !== state;

@@ -1,4 +1,18 @@
-function loser(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+var keyboard = require('./keyboard.js');
+
+function dis(a, b) {
+    var dx = a.x-b.x;
+    var dy = a.y-b.y;
+    return Math.sqrt(dx*dx + dy*dy);
+}
+
+module.exports = {};
+module.exports[''] = function(me, friend, enemy1, enemy2, radius) {
+    return [0, 0];
+}
+
+module.exports['Loser'] = function(me, friend, enemy1, enemy2, radius) {
+    var myPos = [me.x, me.y];
     var f = [-myPos[0], -myPos[1]];
     var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
     if( Math.abs(fLen) < 1 )
@@ -8,7 +22,10 @@ function loser(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     return f;
 }
 
-function softer(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+module.exports['Softer'] = function(me, friend, enemy1, enemy2, radius) {
+    var myPos = [me.x, me.y];
+    var enemyPos = [(enemy1.x+enemy2.x)/2, (enemy1.y+enemy2.y)/2];
+    var enemySpeed = [(enemy1.vx+enemy2.vx)/2, (enemy1.vy+enemy2.vy)/2];
     var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
     var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
     if( Math.abs(fLen) < 1 )
@@ -20,7 +37,8 @@ function softer(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     return f;
 }
 
-function brownian(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+module.exports['Brownian'] = function(me, friend, enemy1, enemy2, radius) {
+    var myPos = [me.x, me.y];
     if( myPos[0]*myPos[0] + myPos[1]*myPos[1] > (radius-25)*(radius-25))
         return [-myPos[0]*1000, -myPos[1]*1000];
 
@@ -28,7 +46,11 @@ function brownian(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     return [1000*Math.cos(theta), 1000*Math.sin(theta)];
 }
 
-function rusher(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+module.exports['Basaker'] = function(me, friend, enemy1, enemy2, radius) {
+    var myPos = [me.x, me.y];
+    var enemyPos = [enemy1.x, enemy1.y];
+    if( Math.random() < 0.5 )
+        enemyPos = [enemy2.x, enemy2.y];
     var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
     var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
     if( Math.abs(fLen) < 1 )
@@ -53,7 +75,15 @@ function rusher(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     return f;
 }
 
-function escaper(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+module.exports['Escaper'] = function(me, friend, enemy1, enemy2, radius) {
+    var myPos = [me.x, me.y];
+    var mySpeed = [me.vx, me.vy];
+    var enemyPos = [enemy1.x, enemy1.y];
+    var enemySpeed = [enemy1.vx, enemy1.vy];
+    if( dis(enemy1, my) > dis(enemy2, my) ) {
+        enemyPos = [enemy2.x, enemy2.y];
+        enemySpeed = [enemy2.vx, enemy2.vy];
+    }
     var p = [-myPos[0], -myPos[1]];
     var pLen = Math.sqrt(p[0]*p[0] + p[1]*p[1]);
     if( Math.abs(pLen) < 1 )
@@ -103,7 +133,8 @@ function escaper(myPos, mySpeed, enemyPos, enemySpeed, radius) {
         return [-mySpeed[0]*10, -mySpeed[1]*10];
 }
 
-function centerCamper(myPos, mySpeed, enemyPos, enemySpeed, radius) {
+module.exports['Center Camper'] = function(me, friend, enemy1, enemy2, radius) {
+    var myPos = [me.x, me.y];
     var f = [-myPos[0], -myPos[1]];
     var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]) + 0.01;
     f[0] = f[0]*1000/fLen + Math.random()*10 - 20;
@@ -111,13 +142,22 @@ function centerCamper(myPos, mySpeed, enemyPos, enemySpeed, radius) {
     return f;
 }
 
+module.exports['WASD space'] = function(me, friend, enemy1, enemy2, radius) {
+    var f = [0, 0];
+    if( keyboard.d ) f[0] += 300;
+    if( keyboard.a ) f[0] -= 300;
+    if( keyboard.s ) f[1] += 300;
+    if( keyboard.w ) f[1] -= 300;
+    if( keyboard.space ) f[0] *= 3, f[1] *= 3;
+    return f;
+}
 
-
-module.exports = {
-    'loser': loser,
-    'softer': softer,
-    'brownian': brownian,
-    'rusher': rusher,
-    'escaper': escaper,
-    'centerCamper': centerCamper,
-};
+module.exports['↑←↓→ enter'] = function(me, friend, enemy1, enemy2, radius) {
+    var f = [0, 0];
+    if( keyboard.right ) f[0] += 300;
+    if( keyboard.left ) f[0] -= 300;
+    if( keyboard.down ) f[1] += 300;
+    if( keyboard.up ) f[1] -= 300;
+    if( keyboard.enter ) f[0] *= 3, f[1] *= 3;
+    return f;
+}
