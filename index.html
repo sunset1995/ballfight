@@ -8,35 +8,53 @@
 <body>
     
     <div id="connect-panel">
-        <header>Connection setting</header>
+        <header>Setting</header>
         <section>
-            <label>url</label>
+            <label>broker url</label>
             <input type="text" id="url" value="ws://wamp-router-sunset1995.c9users.io:8080/ws">
         </section>
         <section>
-            <label>room</label>
+            <label>room name</label>
             <input type="text" id="room" value="yourname">
         </section>
-        <button id="connect">Submit</button>
+        <div class="center-flex">
+            <button id="connect">Create room</button>
+            <button id="offline">Offline mode</button>
+        </div>
     </div>
 
-    <div id="game-panel">
-        <strong></strong>
-        <div id="fight-trigger">
-            <header>Play mode</header>
-            <button id="btn-loser">Loser</button>
-            <button id="btn-softer">Softer</button>
-            <button id="btn-brownian">Brownian</button>
-            <button id="btn-rusher">Rusher</button>
-            <button id="btn-escaper">Escaper</button>
-            <button id="btn-centerCamper">CenterCamper</button>
-            <button id="btn-PVP">PVP</button>
+    <div id="state"></div>
+
+    <div id="selection-panel">
+        <strong>Select Role</strong>
+        <section id="agent-collection">
+            <div></div>
+            <div>Brownian</div>
+            <div>Softer</div>
+            <div>Loser</div>
+            <div>Basaker</div>
+            <div>Center Camper</div>
+            <div>WASD space</div>
+            <div>↑←↓→ enter</div>
+        </section>
+        <section id="player-selected">
+            <div id="p0-select" class="active"></div>
+            <div id="p1-select"></div>
+            <strong>vs.</strong>
+            <div id="p2-select"></div>
+            <div id="p3-select"></div>
+        </section>
+        <hr>
+        <div class="center-flex">
+            <button id="player-select-done">Start Fight!!</button>
         </div>
     </div>
 
     <div id="arena"></div>
-    <div id="hero"></div>
-    <div id="monster"></div>
+    <div id="p0" class="player"></div>
+    <div id="p1" class="player"></div>
+    <div id="p2" class="player"></div>
+    <div id="p3" class="player"></div>
     
 
     <script type="text/javascript">

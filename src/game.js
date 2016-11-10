@@ -5,59 +5,64 @@ var Ball = require('./ball.js');
 
 // Define game class
 var Game = function() {
-    this.hero = new Ball();
-    this.monster = new Ball();
+    this.players = [new Ball(), new Ball(), new Ball(), new Ball()];
     this.init();
-    this.state = 'Let start!';
+    this.state = 'Hello';
 };
 
 Game.prototype.init = function() {
     if( this.state === '' )
         return;
-    this.hero.init(config.heroInit);
-    this.monster.init(config.monsterInit);
+    for(var i=0; i<4; ++i) {
+        const initValue = Object.assign({},
+            config.playerInit.common,
+            config.playerInit.specific[i]
+        );
+        this.players[i].init(initValue);
+    }
     this.radius = config.radiusInit;
-    this.state = '';
 };
+
+Game.prototype.start = function() {
+    this.state = 'Playing';
+}
 
 Game.prototype.next = function() {
-    if( this.state !== '' ) {
-        this.hero.fx = this.hero.fy = 0;
-        this.monster.fx = this.monster.fy = 0;
-        this.hero.k = this.monster.k = 2;
-    }
-    this.hero.next();
-    this.monster.next();
+    if( this.state !== 'Playing' )
+        this.players.forEach((p) => {
+            p.stop();
+        });
+    this.players.forEach((p) => {
+        if( p.outOfRadius(this.radius) )
+            p.stop();
+        p.next();
+    });
 
-    // Detect collision
-    if( this.hero.distanceWith(this.monster) < 51 )
-        this.hero.procCollisionWith(this.monster);
+    // Process collision
+    for(var i=1; i<4; ++i)
+        for(var j=0; j<i; ++j)
+            if( this.players[i].isCollisionWith(this.players[j]) )
+                this.players[i].procCollisionWith(this.players[j]);
+        
 
-    this.hero.norm();
-    this.monster.norm();
+    this.players.forEach((p) => {
+        p.norm();
+    });
 
-    // Detect game over
-    if( this.state !== '' ) {
-        // Do nothing
-    }
-    else if( this.hero.distanceWithOrigin() > this.radius + 25 )
-        this.state = 'lose';
-    else if( this.monster.distanceWithOrigin() > this.radius + 25 )
-        this.state = 'win';
-    else {
+    // Determine game state
+    if( this.state === 'Playing' ) {
         this.radius -= config.radiusDecreasePerTerm;
-        this.radius = parseInt(this.radius*10, 10)/10;
+        this.radius = parseInt(this.radius*10, 10) / 10;
+        if( this.players[0].outOfRadius(this.radius) && this.players[1].outOfRadius(this.radius) )
+            this.state = 'Red win';
+        else if( this.players[2].outOfRadius(this.radius) && this.players[3].outOfRadius(this.radius) )
+            this.state = 'Blue win';
     }
 };
 
-Game.prototype.applyForceToHero = function(force) {
-    if( this.state === '' )
-        this.hero.applyForce(force);
-};
-
-Game.prototype.applyForceToMonster = function(force) {
-    if( this.state === '' )
-        this.monster.applyForce(force);
+Game.prototype.applyForce = function(force, id) {
+    if( this.state === 'Playing' && id < 4 )
+        this.players[id].applyForce(force);
 };
 
 

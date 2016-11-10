@@ -37,6 +37,12 @@ Ball.prototype.init = function(initValue) {
     this.k = 1;
 };
 
+Ball.prototype.stop = function() {
+    this.fx = 0;
+    this.fy = 0;
+    this.k = 2;
+}
+
 Ball.prototype.applyForce = function(force) {
     force[0] = force[0] || 0;
     force[1] = force[1] || 0;
@@ -83,7 +89,7 @@ Ball.prototype.norm = function() {
 Ball.prototype.isCollisionWith = function(other) {
     var X = this.x - other.x;
     var Y = this.y - other.y;
-    return X*X + Y*Y <= 2500;
+    return X*X + Y*Y <= config.ballRadius*config.ballRadius;
 };
 
 Ball.prototype.distanceWith = function(other) {
@@ -93,6 +99,10 @@ Ball.prototype.distanceWith = function(other) {
 Ball.prototype.distanceWithOrigin = function() {
     return vectorLength([this.x, this.y]);
 };
+
+Ball.prototype.outOfRadius = function(R) {
+    return this.distanceWithOrigin() > R + config.ballRadius/2;
+}
 
 Ball.prototype.procCollisionWith = function(other) {
     var base = [this.x-other.x, this.y-other.y];

@@ -1,3 +1,4 @@
+var selectionPanel = require('./ui/selectionPanel.js');
 var autobahn = require('autobahn');
 var handlers = {};
 var connected = false;
@@ -25,10 +26,9 @@ function isConnect() {
 
 
 // DOM
-$('#url').val('ws://'+location.hostname+':8080/ws');
 $('#connect').click(function() {
     $('#connect-panel')[0].style.display = 'none';
-    $('#game-panel')[0].style.opacity = '1';
+    selectionPanel.show();
 
     var connection = new autobahn.Connection({
         url: $('#url').val(),
@@ -75,6 +75,11 @@ $('#connect').click(function() {
 
     console.log('Connecting to server...');
     connection.open();
+});
+
+$('#offline').click(function() {
+    $('#connect-panel')[0].style.display = 'none';
+    selectionPanel.show();
 });
 
 

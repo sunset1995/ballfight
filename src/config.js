@@ -5,25 +5,34 @@ module.exports = {
     // Game related
     radiusInit: 350,
     radiusDecreasePerTerm: 0.5,
-    heroInit: {
-        x: 0,
-        y: 250,
-        vx: 0,
-        vy: 0,
-        ax: 0,
-        ay: 0,
-        fx: 0,
-        fy: 0,
-    },
-    monsterInit: {
-        x: 0,
-        y: -250,
-        vx: 0,
-        vy: 0,
-        ax: 0,
-        ay: 0,
-        fx: 0,
-        fy: 0,
+    ballRadius: 50,
+    playerInit: {
+        common: {
+            vx: 0,
+            vy: 0,
+            ax: 0,
+            ay: 0,
+            fx: 0,
+            fy: 0,
+        },
+        specific: [
+            {
+                x: -200,
+                y: -200,
+            },
+            {
+                x: 200,
+                y: -200,
+            },
+            {
+                x: -200,
+                y: 200,
+            },
+            {
+                x: 200,
+                y: 200,
+            },
+        ],
     },
 
     // Physical engine related

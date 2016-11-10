@@ -3,62 +3,40 @@ var config = require('./config.js');
 var Connector = require('./connector');
 var Agent = require('./agent.js');
 var GameProto = require('./game.js');
+var keyboard = require('./keyboard.js');
 
 // Shared variable
-var game = new GameProto();
-var agent = null;
-var state = 'init';
-var heroPos = [config.heroInit.x, config.heroInit.y];
-var heroSpeed = [config.heroInit.vx, config.heroInit.vy];
-var monsterPos = [config.monsterInit.x, config.monsterInit.y];
-var monsterSpeed = [config.monsterInit.vx, config.monsterInit.vy];
-var radius = config.radiusInit;
+window.game = new GameProto();
 
-
-// Useful function
-function startGame(mode) {
-    game.init();
-    if( mode==='PVP' )
-        agent = null;
-    else if( Agent[mode] )
-        agent = Agent[mode];
-}
-
-
-// Game panel
-var gamePanel = (function() {
-    var feedbackBlock = $('#game-panel')[0];
-    var feedback = $('#game-panel > strong')[0];
-
-    // Binding
-    $('#fight-trigger > button').click(function() {
-        var mode = $(this).attr('id').slice(4);
-        console.log('start with mode', mode);
-        startGame(mode);
-    });
-
-
-    return {
-        'show': function(str) {
-            feedback.innerHTML = str;
-            feedbackBlock.style.display = 'block';
-        },
-        'hide': function() {
-            feedbackBlock.style.display = 'none';
-        },
-    }
-})();
 
 
 // Coculate game term
 function termCoculation() {
+    /*
     game.applyForceToHero(Connector.getHeroAction());
     if( agent )
         game.applyForceToMonster(agent(monsterPos, monsterSpeed, heroPos, heroSpeed, radius))
     else
         game.applyForceToMonster(Connector.getMonsterAction());
+    */
 
-    game.next();
+    var f = [0, 0];
+    if( keyboard.d ) f[0] += 300;
+    if( keyboard.a ) f[0] -= 300;
+    if( keyboard.s ) f[1] += 300;
+    if( keyboard.w ) f[1] -= 300;
+    if( keyboard.space ) f[0] *= 3, f[1] *= 3;
+    window.game.applyForce(f, 0);
+    f = [0, 0];
+    if( keyboard.right ) f[0] += 300;
+    if( keyboard.left ) f[0] -= 300;
+    if( keyboard.down ) f[1] += 300;
+    if( keyboard.up ) f[1] -= 300;
+    if( keyboard.enter ) f[0] *= 3, f[1] *= 3;
+    window.game.applyForce(f, 2);
+    window.game.next();
+
+    /*
     var stateChange = game.state !== state;
     state = game.state;
     heroPos = [game.hero.x, game.hero.y];
@@ -76,14 +54,15 @@ function termCoculation() {
             'monsterSpeed': monsterSpeed,
             'radius': radius,
         });
+    */
 }
 setInterval(termCoculation, config.interval);
 
 
 // Coculate what to display on each frames
 var arenaDOM = $('#arena')[0];
-var heroDOM = $('#hero')[0];
-var monsterDOM = $('#monster')[0];
+var playersDOM = [$('#p0')[0], $('#p1')[0], $('#p2')[0], $('#p3')[0]];
+var stateDOM = $('#state')[0];
 var lastState = null;
 
 function frameCoculation() {
@@ -91,18 +70,24 @@ function frameCoculation() {
     var arena = arenaDOM.getBoundingClientRect();
     var oX = document.body.getBoundingClientRect().width / 2;
     var oY = document.body.getBoundingClientRect().height / 2;
-    var hX = oX + heroPos[0];
-    var hY = oY + heroPos[1];
-    var mX = oX + monsterPos[0];
-    var mY = oY + monsterPos[1];
+    var pX = [];
+    var pY = [];
+    for(var i=0; i<4; ++i) {
+        pX.push(oX + window.game.players[i].x);
+        pY.push(oY + window.game.players[i].y);
+    }
 
     // write
-    arenaDOM.style.width = (2*radius) + 'px';
-    arenaDOM.style.height = (2*radius) + 'px';
-    heroDOM.style.transform = 'translate('+hX+'px, '+hY+'px)';
-    heroDOM.style.transform = 'translate3d('+hX+'px, '+hY+'px, 0)';
-    monsterDOM.style.transform = 'translate('+mX+'px, '+mY+'px)';
-    monsterDOM.style.transform = 'translate3d('+mX+'px, '+mY+'px, 0)';
+    arenaDOM.style.width = (2*window.game.radius) + 'px';
+    arenaDOM.style.height = (2*window.game.radius) + 'px';
+    for(var i=0; i<4; ++i) {
+        playersDOM[i].style.transform = 'translate('+pX[i]+'px, '+pY[i]+'px)';
+        playersDOM[i].style.transform = 'translate3d('+pX[i]+'px, '+pY[i]+'px, 0)';
+    }
+
+    stateDOM.textContent = window.game.state;
+
+    /*
     if( !Connector.isConnect() )
         gamePanel.show('Connection closed');
     else if( lastState!==game.state ) {
@@ -116,6 +101,7 @@ function frameCoculation() {
         else
             gamePanel.show(game.state);
     }
+    */
 
     // next
     requestAnimationFrame(frameCoculation);

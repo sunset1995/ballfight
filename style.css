@@ -2,6 +2,7 @@
     padding: 0;
     margin: 0;
     border: 0;
+    font-family: monospace;
 }
 html, body {
     position: relative;
@@ -17,82 +18,166 @@ html, body {
     width: 700px;
     height: 700px;
     z-index: 100;
+    transform: translate(-50%, -50%);
     transform: translate3d(-50%, -50%, 0);
     border-radius: 50%;
-    background-color: #333;
+    background-color: #464646;
     
     will-change: transform;
 }
-#hero {
+.player {
     position: absolute;
     width: 50px;
     height: 50px;
     left: -25px;
     top: -25px;
-    border: 1px black solid;
+    border: 1px #333 solid;
     z-index: 200;
     border-radius: 50%;
-    background-color: #93E4C1;
-    transition: opacity 500ms;
+
+    will-change: transform;
 }
-#monster {
+#p0 {
+    background-color: #3DD2CC;
+}
+#p1 {
+    background-color: #A6E3E9;
+}
+#p2 {
+    background-color: #E84A5F;
+}
+#p3 {
+    background-color: #FF847B;
+}
+
+#state {
     position: absolute;
-    width: 50px;
-    height: 50px;
-    left: -25px;
-    top: -25px;
-    border: 1px black solid;
-    z-index: 200;
-    border-radius: 50%;
-    background-color: #FF9090;
-    transition: opacity 500ms;
+    left: 50%;
+    top: -1.3em;
+    transform: translate(-50%, 0);
+    color: white;
+    background-color: #464646;
+    padding: 2em 1em 1em 1em;
+    border-radius: 10px;
+    width: 10em;
+    text-align: center;
+    z-index: 9999;
 }
 
 
-/* Game panel */
-#game-panel {
+/* selection panel */
+#selection-panel {
     display: none;
-    opacity: 0;
     position: absolute;
-    width: 100%;
+    width: 600px;
     top: 50%;
     left: 50%;
     z-index: 900;
-    transform: translate(-50%, -50%);
     text-align: center;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 2em 1em;
+    border-radius: 3px;
+    border: 1px #dedede solid;
 }
-#game-panel strong {
-    display: block;
-    font-size: 4em;
-    color: rgb(133, 166, 177);
-    text-shadow: 2px 2px white;
+#selection-panel > strong {
+    font-size: 2em;
 }
-#fight-trigger {
-    display: none;
-    margin: 1em auto;
-    max-width: 500px;
+#selection-panel > hr {
+    height: 1px;
+    background-color: #dedede;
+    margin: 4em 0 2em 0;
 }
-#fight-trigger header {
-    font-size: 1.5em;
-    color: rgb(133, 166, 177);
-    text-shadow: 1px 1px white;
+#agent-collection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 2em 0;
 }
-#fight-trigger button {
-    font-size: 1em;
-    padding: .5em 1em;
-    border: 0;
-    background-color: rgb(133, 166, 177);
+#agent-collection > div {
+    padding: 1em;
+    margin: 1.5% 0;
     color: white;
-    box-shadow: 2px 2px #eee;
-    margin: .5em;
+    background-color: #333;
+    width: 22%;
     cursor: pointer;
+    box-sizing: border-box;
+    transition: opacity 300ms;
+    opacity: .64;
+    will-change: opacity;
 }
-#fight-trigger #btn-PVP {
-    background-color: #8c8c8c;
+#agent-collection > div.active,
+#agent-collection > div:hover {
+    opacity: 1;
+}
+#player-selected {
+    display: flex;
+}
+#player-selected > strong {
+    flex: 0.5;
+    font-size: 2em;
+    font-style: italic;
+    color: #333;
+    height: 4em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;   
+}
+#player-selected > div {
+    flex: 1;
+    height: 8em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    transition: opacity 500ms;
+    opacity: 0.6;
+    cursor: pointer;
+    font-weight: 900;
+}
+#player-selected > div.active {
+    animation-name: blink;
+    animation-duration: 400ms;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+#player-selected > div:hover {
+    opacity: 1;
+}
+#p0-select {
+    color: rgba(0, 0, 0, .6);
+    background-color: #3DD2CC;
+}
+#p1-select {
+    color: rgba(0, 0, 0, .6);
+    background-color: #A6E3E9;
+}
+#p2-select {
+    color: rgba(255, 255, 255, .8);
+    background-color: #E84A5F;
+}
+#p3-select {
+    color: rgba(255, 255, 255, .8);
+    background-color: #FF847B;
+}
+#player-select-done {
+    font-size: 1.5em;
+    font-style: italic;
+    padding: 1em 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    border: 0;
+    border-radius: 3px;
+    cursor: pointer;
+    color: white;
+    background-color: #7fb959;
+}
+#player-select-done:hover {
+    text-decoration: underline;
 }
 
 
-/* Init pannel */
+/* room setting pannel */
 #connect-panel {
     position: fixed;
     top: 50%;
@@ -101,11 +186,12 @@ html, body {
     z-index: 999;
     width: 90%;
     max-width: 500px;
-    background-color: #333;
+    background-color: #292929;
     border-radius: #333;
     padding: 2em 0;
     color: white;
     border-radius: 10px;
+    box-shadow: 3px 3px 0 1px white;
 }
 
 #connect-panel header {
@@ -137,23 +223,30 @@ html, body {
     background-color: #eee;
     border-radius: 3px;
 }
-
 #connect-panel button {
     font-size: 1em;
     padding: .5em 1em;
     text-align: center;
-    background-color: #7fb959;
     color: white;
     border: 0;
     border-radius: 3px;
     cursor: pointer;
-    margin: 2em auto 0 auto;
+    margin: 2em 1em 0 1em;
 }
 
 #connect {
-    display: block;
+    background-color: #7fb959;
 }
-button#connect-hero,
-button#connect-monster {
-    margin: 1em 1em 0 1em;
+#offline {
+    background-color: #FF847B;
+}
+
+.center-flex {
+    display: flex;
+    justify-content: center;
+}
+
+@keyframes blink {
+    from {opacity: 0.6;}
+    to {opacity: 1;}
 }
