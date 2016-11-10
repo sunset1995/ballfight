@@ -49,7 +49,7 @@ module.exports['Brownian'] = function(me, friend, enemy1, enemy2, radius) {
 module.exports['Basaker'] = function(me, friend, enemy1, enemy2, radius) {
     var myPos = [me.x, me.y];
     var enemyPos = [enemy1.x, enemy1.y];
-    if( Math.random() < 0.5 )
+    if( dis(enemy1, me) > dis(enemy2, me) )
         enemyPos = [enemy2.x, enemy2.y];
     var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
     var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
