@@ -1,7 +1,7 @@
 var selectionPanel = (function() {
     var panel = $('#selection-panel')[0];
     var nowActive = $('#p0-select');
-    var selec = [null, null, null, null, ];
+    var players = [null, null, null, null, ];
 
     function show() {
         panel.style.display = 'block';
@@ -16,12 +16,15 @@ var selectionPanel = (function() {
     });
 
     $('#agent-collection > div').click(function() {
-        nowActive.text($(this).text());
+        nowActive.text($(this).text()).data('player', $(this).attr('id'));
         $('#player-selected > div').removeClass('active');
         nowActive = nowActive.nextAll('div').first().addClass('active');
     });
 
     $('#player-select-done').click(function() {
+        $('#player-selected > div').each(function(idx, ele) {
+            players[idx] = $('#'+$(ele).data('player'));
+        });
         window.game.init();
         hide();
         window.game.start();
@@ -30,6 +33,7 @@ var selectionPanel = (function() {
     return {
         show: show,
         hide: hide,
+        players: players,
     }
 })();
 

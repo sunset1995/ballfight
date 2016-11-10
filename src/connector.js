@@ -1,7 +1,6 @@
 var selectionPanel = require('./ui/selectionPanel.js');
 var autobahn = require('autobahn');
 var handlers = {};
-var connected = false;
 var session = null;
 var roomname = '';
 var heroAction = [0, 0];
@@ -20,10 +19,6 @@ function getMonsterAction() {
     return monsterAction;
 }
 
-function isConnect() {
-    return connected;
-}
-
 
 // DOM
 $('#connect').click(function() {
@@ -40,15 +35,12 @@ $('#connect').click(function() {
     connection.onclose = function (reason, details) {
        // connection closed, lost or unable to connect
        console.log('Connection was closed due to:', reason);
-       $('#fight-trigger')[0].style.display = 'none';
-       connected = false;
+       console.log('connection closed');
     };
 
 
     connection.onopen = function (ses) {
         console.log('Connection success');
-        $('#fight-trigger')[0].style.display = 'block';
-        connected = true;
         session = ses;
 
 
@@ -89,5 +81,4 @@ module.exports = {
     'publishState': publishState,
     'getHeroAction': getHeroAction,
     'getMonsterAction': getMonsterAction,
-    'isConnect': isConnect,
 }

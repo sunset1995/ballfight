@@ -4,7 +4,7 @@ module.exports = {
 
     // Game related
     radiusInit: 350,
-    radiusDecreasePerTerm: 0.5,
+    radiusDecreasePerTerm: 2,
     ballRadius: 50,
     playerInit: {
         common: {

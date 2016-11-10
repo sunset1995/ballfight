@@ -1,4 +1,6 @@
 // Include dependency
+var selectionPanel = require('./ui/selectionPanel.js');
+var gameResult = require('./ui/game-result.js');
 var config = require('./config.js');
 var Connector = require('./connector');
 var Agent = require('./agent.js');
@@ -7,6 +9,7 @@ var keyboard = require('./keyboard.js');
 
 // Shared variable
 window.game = new GameProto();
+window.gameResult = gameResult;
 
 
 
@@ -87,21 +90,20 @@ function frameCoculation() {
 
     stateDOM.textContent = window.game.state;
 
-    /*
-    if( !Connector.isConnect() )
-        gamePanel.show('Connection closed');
-    else if( lastState!==game.state ) {
-        lastState = game.state;
-        if( game.state === '' )
-            gamePanel.hide();
-        else if( game.state === 'win' )
-            gamePanel.show('Hero is winner!!!');
-        else if( game.state === 'lose' )
-            gamePanel.show('Hero is loser...');
-        else
-            gamePanel.show(game.state);
+    // Each time state change check UI
+    if( lastState !== window.game.state ) {
+        lastState = window.game.state;
+        if( window.game.state === 'Playing' )
+            selectionPanel.hide();
+        else if( window.game.state === 'Blue win' ) {
+            gameResult.show('Blue win!!!', '#3DD2CC');
+            document.body.style.backgroundColor = '#dcfffe';
+        }
+        else if( window.game.state === 'Red win' ) {
+            gameResult.show('Red win!!!', '#E84A5F');
+            document.body.style.backgroundColor = '#ffbbb6';
+        }
     }
-    */
 
     // next
     requestAnimationFrame(frameCoculation);
