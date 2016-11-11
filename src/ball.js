@@ -16,6 +16,12 @@ function friction(v, k) {
     k = k || 0;
     return [-v[0]*k, -v[1]*k];
 }
+function applyNoise(f) {
+    var flen = Math.sqrt(dot(f, f));
+    var rad = Math.atan2(f[1], f[0]) + Math.random() * Math.PI / 3 - Math.PI / 6;
+    f[0] = flen * Math.cos(rad);
+    f[1] = flen * Math.sin(rad);
+}
 
 
 
@@ -46,6 +52,7 @@ Ball.prototype.stop = function() {
 Ball.prototype.applyForce = function(force) {
     force[0] = force[0] || 0;
     force[1] = force[1] || 0;
+    applyNoise(force);
     var len = vectorLength(force);
     if( len > config.maxForce ) {
         force[0] *= config.maxForce / len;
