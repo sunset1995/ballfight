@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import math
@@ -27,6 +28,9 @@ class BallfightConnector(ApplicationSession):
 
     @inlineCallbacks
     def onJoin(self, details):
+        # The stdout is updated by autobahn
+        # so convert it back to original one
+        sys.stdout = sys.__stdout__
         print("Connection success")
         print("Setting game ...")
 
