@@ -6,6 +6,10 @@ function dis(a, b) {
     return Math.sqrt(dx*dx + dy*dy);
 }
 
+function disO(a) {
+    return Math.sqrt(a.x*a.x + a.y*a.y);
+}
+
 module.exports = {};
 module.exports[''] = function(me, friend, enemy1, enemy2, radius) {
     return [0, 0];
@@ -49,30 +53,12 @@ module.exports['Brownian'] = function(me, friend, enemy1, enemy2, radius) {
 module.exports['Basaker'] = function(me, friend, enemy1, enemy2, radius) {
     var myPos = [me.x, me.y];
     var enemyPos = [enemy1.x, enemy1.y];
-    if( dis(enemy1, me) > dis(enemy2, me) )
+    if( disO(enemy1)>radius || 
+            disO(enemy2)<radius &&
+            dis(enemy1, me) > dis(enemy2, me) )
         enemyPos = [enemy2.x, enemy2.y];
     var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
-    var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
-    if( Math.abs(fLen) < 1 )
-        return f;
-    f[0] /= fLen;
-    f[1] /= fLen;
-    var disEnemy = fLen;
-    var disGG = radius - Math.sqrt(myPos[0]*myPos[0] + myPos[1]*myPos[1]);
-    if(disGG < 100) {
-        f[0] *= 1000;
-        f[1] *= 1000;
-    }
-    else if(disEnemy < 200) {
-        f[0] *= 500;
-        f[1] *= 500;
-    }
-    else {
-        f[0] *= 200;
-        f[1] *= 200;
-    }
-    f[0] += Math.random()*100 - 50
-    return f;
+    return [f[0]*100000, f[1]*100000];
 }
 
 module.exports['Escaper'] = function(me, friend, enemy1, enemy2, radius) {
