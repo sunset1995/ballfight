@@ -14,20 +14,16 @@ window.game = new GameProto();
 // Coculate game term
 function termCoculation() {
 
-    // Next term
-    window.game.next();
-
-    var state = {
-        players: [],
-        radius: window.game.radius,
-    }
+    var players = []
     for(var i=0; i<4; ++i)
-        state.players.push({
+        players.push({
             x: window.game.players[i].x,
             y: window.game.players[i].y,
             vx: window.game.players[i].vx,
             vy: window.game.players[i].vy,
+            say: window.game.players[i].say,
         });
+
 
     for(var i=0; i<4; ++i) {
         if( !selectionPanel.players[i] )
@@ -36,15 +32,16 @@ function termCoculation() {
             var agentInfo = selectionPanel.players[i];
             var force = [0, 0];
             if( agentInfo.type === 'local-agent' ) {
-                var me = state.players[i];
-                var friend = state.players[2*Math.floor(i/2) + (i%2 ^ 1)];
-                var enemy1 = state.players[2*(Math.floor(i/2) ^ 1)];
-                var enemy2 = state.players[2*(Math.floor(i/2) ^ 1) + 1];
-                var radius = state.radius;
+                var me = players[i];
+                var friend = players[2*Math.floor(i/2) + (i%2 ^ 1)];
+                var enemy1 = players[2*(Math.floor(i/2) ^ 1)];
+                var enemy2 = players[2*(Math.floor(i/2) ^ 1) + 1];
+                var radius = window.game.radius;
                 force = Agent[agentInfo.name](me, friend, enemy1, enemy2, radius);
             }
             else {
-                //
+                force = Connector.getForce(agentInfo.name);
+                window.game.players[i].say = Connector.getSay(agentInfo.name);
             }
             game.applyForce(force, i);
         }
@@ -53,25 +50,31 @@ function termCoculation() {
         }
     }
 
-    /*
-    var stateChange = game.state !== state;
-    state = game.state;
-    heroPos = [game.hero.x, game.hero.y];
-    heroSpeed = [game.hero.vx, game.hero.vy];
-    monsterPos = [game.monster.x, game.monster.y];
-    monsterSpeed = [game.monster.vx, game.monster.vy];
-    radius = game.radius;
 
-    if( game.state === '' || stateChange )
-        Connector.publishState({
-            'state': game.state,
-            'heroPos': heroPos,
-            'heroSpeed': heroSpeed,
-            'monsterPos': monsterPos,
-            'monsterSpeed': monsterSpeed,
-            'radius': radius,
-        });
-    */
+    // Next term
+    window.game.next();
+
+
+    for(var i=0; i<4; ++i) {
+        var agentInfo = selectionPanel.players[i];
+        if( !agentInfo ) continue;
+        if( agentInfo.type === 'remote-agent' ) {
+            var state = window.game.state;
+            var me = players[i];
+            var friend = players[2*Math.floor(i/2) + (i%2 ^ 1)];
+            var enemy1 = players[2*(Math.floor(i/2) ^ 1)];
+            var enemy2 = players[2*(Math.floor(i/2) ^ 1) + 1];
+            var radius = window.game.radius;
+            Connector.publishState({
+                state: state,
+                me: me,
+                friend: friend,
+                enemy1: enemy1,
+                enemy2: enemy2,
+                radius: radius,
+            });
+        }
+    }
 }
 setInterval(termCoculation, config.interval);
 

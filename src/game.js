@@ -21,6 +21,7 @@ Game.prototype.init = function() {
         this.players[i].init(initValue);
     }
     this.radius = config.radiusInit;
+    this.say = '';
 };
 
 Game.prototype.start = function() {

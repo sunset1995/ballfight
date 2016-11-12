@@ -9,7 +9,29 @@ var selectionPanel = (function() {
     for(var i=0; i<agentsName.length; ++i) {
         var ele = $('<div>').data({type: 'local-agent', name: agentsName[i]})
                         .text(agentsName[i]);
+        if( agentsName[i] === '' ) ele.attr('id', 'no-agent');
         $('#agent-collection').append(ele);
+    }
+
+    function nextActive() {
+        $('#player-selected > div').removeClass('active');
+        nowActive = nowActive.nextAll('div').first();
+        for(var i=0; i<4 && nowActive.data('name') && nowActive.length; ++i)
+            nowActive = nowActive.nextAll('div').first();
+        if( !nowActive.length ) {
+            var divs = $('#player-selected > div');
+            for(var i=0; i<4; ++i)
+                if( !$(divs[i]).data('name') ) {
+                    nowActive = $(divs[i]);
+                    break;
+                }
+        }
+        nowActive.addClass('active');
+    }
+    function bindPlayer(player, agent) {
+        player.text(agent.text())
+            .data('type', agent.data('type'))
+            .data('name', agent.data('name'));
     }
 
     function show() {
@@ -18,6 +40,21 @@ var selectionPanel = (function() {
     function hide() {
         panel.style.display = 'none';
     }
+    function addRemoteAgentOption(name) {
+        var ele = $('<div>').data({type: 'remote-agent', name: name})
+                .text(name)
+                .addClass('remote-agent')
+                .click(function() {
+                    var that = $(this);
+                    $('#player-selected > div').each((idx, ele) => {
+                        if( $(ele).data('name') === that.data('name') )
+                            bindPlayer($(ele), $('#no-agent'));
+                    });
+                    bindPlayer(nowActive, that);
+                    nextActive();
+                });
+        $('#agent-collection').append(ele);
+    }
 
     $('#player-selected > div').click(function() {
         $('#player-selected > div').removeClass('active');
@@ -25,11 +62,8 @@ var selectionPanel = (function() {
     });
 
     $('#agent-collection > div').click(function() {
-        nowActive.text($(this).text())
-            .data('type', $(this).data('type'))
-            .data('name', $(this).data('name'));
-        $('#player-selected > div').removeClass('active');
-        nowActive = nowActive.nextAll('div').first().addClass('active');
+        bindPlayer(nowActive, $(this));
+        nextActive();
     });
 
     $('#player-select-done').click(function() {
@@ -48,9 +82,8 @@ var selectionPanel = (function() {
         show: show,
         hide: hide,
         players: players,
+        addRemoteAgentOption: addRemoteAgentOption,
     }
 })();
-
-window.selectionPanel = selectionPanel;
 
 module.exports = selectionPanel;

@@ -1,22 +1,29 @@
 var selectionPanel = require('./ui/selectionPanel.js');
 var autobahn = require('autobahn');
-var handlers = {};
 var session = null;
 var roomname = '';
-var heroAction = [0, 0];
-var monsterAction = [0, 0];
+var actions = {};
 
-function publishState(state) {
+module.exports['publishState'] = function(state) {
     if( session )
         session.publish(roomname+'.arena', [], state);
 }
 
-function getHeroAction() {
-    return heroAction;
+module.exports['askName'] = function() {
+    if( session ) {
+        session.publish(roomname+'.name.request', [], {});
+        console.log(roomname+'.name.request')
+    }
 }
 
-function getMonsterAction() {
-    return monsterAction;
+module.exports['getForce'] = function(who) {
+    if( actions[who] ) return actions[who].force;
+    else return [0, 0];
+}
+
+module.exports['getSay'] = function(who) {
+    if( actions[who] ) return actions[who].say;
+    else return '';
 }
 
 
@@ -31,11 +38,16 @@ $('#connect').click(function() {
     });
     roomname = $('#room').val();
 
+    var heartbeater = setInterval(function() {
+        if( session )
+            session.publish('heartbeat', [], {});
+    }, 5000);
 
     connection.onclose = function (reason, details) {
        // connection closed, lost or unable to connect
        console.log('Connection was closed due to:', reason);
        console.log('connection closed');
+       clearInterval(heartbeater);
     };
 
 
@@ -44,24 +56,34 @@ $('#connect').click(function() {
         session = ses;
 
 
-        function heroActionHandler(args, kwargs, details) {
-            var force = args[0];
-            if( typeof force === 'object' && 
-                    typeof force[0] === 'number' && 
-                    typeof force[1] === 'number' )
-                heroAction = force;
+        function nameHandler(args, kwargs, details) {
+            if( typeof kwargs.name === 'string' && !actions[kwargs.name] ) {
+                actions[kwargs.name] = {
+                    force: [0, 0],
+                    say: '',
+                };
+                selectionPanel.addRemoteAgentOption(kwargs.name);
+            }
         }
-        session.subscribe(roomname+'.hero', heroActionHandler);
+        session.subscribe(roomname+'.name.reply', nameHandler);
 
 
-        function monsterActionHandler(args, kwargs, details) {
-            var force = args[0];
-            if( typeof force === 'object' && 
-                    typeof force[0] === 'number' && 
-                    typeof force[1] === 'number' )
-                monsterAction = force;
+        function actionHandler(args, kwargs, details) {
+            var name = kwargs.name;
+            var force = kwargs.force;
+            var say = kwargs.say;
+            if( typeof name === 'string' ) {
+                if( typeof force === 'object' && 
+                        typeof force[0] === 'number' && 
+                        typeof force[1] === 'number' )
+                    actions[name].force = force;
+                if( say )
+                    actions[name].say = say;
+            }
         }
-        session.subscribe(roomname+'.monster', monsterActionHandler);
+        session.subscribe(roomname+'.action', actionHandler);
+
+        module.exports['askName']();
     };
 
 
@@ -73,12 +95,3 @@ $('#offline').click(function() {
     $('#connect-panel')[0].style.display = 'none';
     selectionPanel.show();
 });
-
-
-
-
-module.exports = {
-    'publishState': publishState,
-    'getHeroAction': getHeroAction,
-    'getMonsterAction': getMonsterAction,
-}
