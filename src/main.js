@@ -65,7 +65,7 @@ function termCoculation() {
             var enemy1 = players[2*(Math.floor(i/2) ^ 1)];
             var enemy2 = players[2*(Math.floor(i/2) ^ 1) + 1];
             var radius = window.game.radius;
-            Connector.publishState({
+            Connector.publishState(agentInfo.name, {
                 state: state,
                 me: me,
                 friend: friend,

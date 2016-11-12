@@ -136,9 +136,8 @@ module.exports['Escaper'] = function(me, friend, enemy1, enemy2, radius) {
 module.exports['Center Camper'] = function(me, friend, enemy1, enemy2, radius) {
     var myPos = [me.x, me.y];
     var f = [-myPos[0], -myPos[1]];
-    var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]) + 0.01;
-    f[0] = f[0]*1000/fLen + Math.random()*10 - 20;
-    f[1] = f[1]*1000/fLen + Math.random()*10 - 20;
+    f[0] = f[0]*100000;
+    f[1] = f[1]*100000;
     return f;
 }
 

@@ -4,16 +4,14 @@ var session = null;
 var roomname = '';
 var actions = {};
 
-module.exports['publishState'] = function(state) {
+module.exports['publishState'] = function(toWhom, state) {
     if( session )
-        session.publish(roomname+'.arena', [], state);
+        session.publish(roomname+'.arena.'+toWhom, [], state);
 }
 
 module.exports['askName'] = function() {
-    if( session ) {
+    if( session )
         session.publish(roomname+'.name.request', [], {});
-        console.log(roomname+'.name.request')
-    }
 }
 
 module.exports['getForce'] = function(who) {
