@@ -2,19 +2,15 @@ import api
 
 
 def strategy():
-    state = api.getState()
-    myPos = api.getMyPosition()
-    mySpeed = api.getMySpeed()
-    enemyPos = api.getEnemyPosition()
-    enemySpeed = api.getEnemySpeed()
-    arenaR = api.getArenaRadius()
-    gsensor = api.getGsensor()
 
-    if state!='':
-        # Win or lose
-        print(state)
+    info = api.get()
+    print('radius', info['radius'])
+    print('me', info['me'])
+    print('friend', info['friend'])
+    print('enemy1', info['enemy1'])
+    print('enemy2', info['enemy2'])
 
-    return [-100, -100]
+    return [1000, 1000, 'gogo']
 
 
-api.play('ws://snp2016.nctu.me:8080/ws', 'yourname', strategy)
+api.play('ws://demo-bf-sunset1995.c9users.io:8080/ws', 'demo-room', '君の名', strategy)
