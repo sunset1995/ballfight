@@ -16,16 +16,8 @@ var selectionPanel = (function() {
     function nextActive() {
         $('#player-selected > div').removeClass('active');
         nowActive = nowActive.nextAll('div').first();
-        for(var i=0; i<4 && nowActive.data('name') && nowActive.length; ++i)
-            nowActive = nowActive.nextAll('div').first();
-        if( !nowActive.length ) {
-            var divs = $('#player-selected > div');
-            for(var i=0; i<4; ++i)
-                if( !$(divs[i]).data('name') ) {
-                    nowActive = $(divs[i]);
-                    break;
-                }
-        }
+        if( !nowActive.length )
+            nowActive = $($('#player-selected > div')[0]);
         nowActive.addClass('active');
     }
     function bindPlayer(player, agent) {
