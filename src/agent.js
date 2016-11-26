@@ -50,7 +50,7 @@ module.exports['Brownian'] = function(me, friend, enemy1, enemy2, radius) {
     return [1000*Math.cos(theta), 1000*Math.sin(theta)];
 }
 
-module.exports['Basaker'] = function(me, friend, enemy1, enemy2, radius) {
+module.exports['Berserker'] = function(me, friend, enemy1, enemy2, radius) {
     var myPos = [me.x, me.y];
     var enemyPos = [enemy1.x, enemy1.y];
     if( disO(enemy1)>radius || 
