@@ -9,6 +9,7 @@ const pressing = {
     'left': false,
     'down': false,
     'right': false,
+    'p': false
 };
 
 $(document).keydown((e) => {
@@ -23,6 +24,7 @@ $(document).keydown((e) => {
         case 37: pressing.left = true; break;
         case 40: pressing.down = true; break;
         case 39: pressing.right = true; break;
+        case 80: pressing.p = true; break;
     }
 });
 
@@ -38,6 +40,7 @@ $(document).keyup((e) => {
         case 37: pressing.left = false; break;;
         case 40: pressing.down = false; break;
         case 39: pressing.right = false; break;
+        case 80: pressing.p = false; break;
     }
 });
 
