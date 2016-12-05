@@ -63,6 +63,16 @@ function termCoculation() {
     window.game.next();
 
 
+    Connector.publishState('ob', {
+        state: window.game.state,
+        players: [
+            {x: players[0].x, y: players[0].y},
+            {x: players[1].x, y: players[1].y},
+            {x: players[2].x, y: players[2].y},
+            {x: players[3].x, y: players[3].y},
+        ],
+        radius: window.game.radius,
+    });
     for(var i=0; i<4; ++i) {
         var agentInfo = selectionPanel.players[i];
         if( !agentInfo ) continue;
@@ -115,6 +125,8 @@ function deepcopyAndFlipYaxis(plist) {
 
 
 // Coculate what to display on each frames
+// Below code has no logic about game
+// Just simply read info from game engine and paint it
 var arenaDOM = $('#arena')[0];
 var playersDOM = [$('#p0')[0], $('#p1')[0], $('#p2')[0], $('#p3')[0]];
 var stateDOM = $('#state')[0];
