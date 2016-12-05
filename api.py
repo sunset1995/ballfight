@@ -3,6 +3,7 @@ import sys
 import json
 import math
 import time
+import copy
 from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks
 from autobahn.twisted.wamp import ApplicationSession
@@ -100,7 +101,25 @@ class BallfightConnector(ApplicationSession):
 
 # Game info api
 def get():
-    return data
+    return copy.deepcopy(data)
+
+def getState():
+    return data['state']
+
+def getMe():
+    return [data['me']['x'], data['me']['y'], data['me']['vx'], data['me']['vy']]
+
+def getFriend():
+    return [data['friend']['x'], data['friend']['y'], data['friend']['vx'], data['friend']['vy']]
+
+def getEnemy1():
+    return [data['enemy1']['x'], data['enemy1']['y'], data['enemy1']['vx'], data['enemy1']['vy']]
+
+def getEnemy2():
+    return [data['enemy2']['x'], data['enemy2']['y'], data['enemy2']['vx'], data['enemy2']['vy']]
+
+def getRadius():
+    return data['radius']
 
 
 
