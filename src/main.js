@@ -41,6 +41,14 @@ function termCoculation() {
             }
             else {
                 force = Connector.getForce(agentInfo.name);
+                if( i==1 )
+                    force[0] *= -1;
+                else if( i==2 ) {
+                    force[0] *= -1;
+                    force[1] *= -1;
+                }
+                else if( i==3 )
+                    force[1] *= -1;
                 window.game.players[i].say = Connector.getSay(agentInfo.name);
             }
             game.applyForce(force, i);
@@ -60,10 +68,19 @@ function termCoculation() {
         if( !agentInfo ) continue;
         if( agentInfo.type === 'remote-agent' ) {
             var state = window.game.state;
-            var me = players[i];
-            var friend = players[2*Math.floor(i/2) + (i%2 ^ 1)];
-            var enemy1 = players[2*(Math.floor(i/2) ^ 1)];
-            var enemy2 = players[2*(Math.floor(i/2) ^ 1) + 1];
+            var plist = players;
+            if( i==1 )
+                plist = deepcopyAndFlipYaxis(plist);
+            else if( i==2 ) {
+                plist = deepcopyAndFlipYaxis(plist);
+                plist = deepcopyAndFlipXaxis(plist);
+            }
+            else if( i==3 )
+                plist = deepcopyAndFlipXaxis(plist);
+            var me = plist[i];
+            var friend = plist[2*Math.floor(i/2) + (i%2 ^ 1)];
+            var enemy1 = plist[2*(Math.floor(i/2) ^ 1) + (i%2)];
+            var enemy2 = plist[2*(Math.floor(i/2) ^ 1) + (i%2 ^ 1)];
             var radius = window.game.radius;
             Connector.publishState(agentInfo.name, {
                 state: state,
@@ -77,6 +94,24 @@ function termCoculation() {
     }
 }
 setInterval(termCoculation, config.interval);
+
+// Helper function
+function deepcopyAndFlipXaxis(plist) {
+    var st = JSON.parse(JSON.stringify(plist));
+    for(var i=0; i<4; ++i) {
+        st[i].y *= -1;
+        st[i].vy *= -1;
+    }
+    return st;
+}
+function deepcopyAndFlipYaxis(plist) {
+    var st = JSON.parse(JSON.stringify(plist));
+    for(var i=0; i<4; ++i) {
+        st[i].x *= -1;
+        st[i].vx *= -1;
+    }
+    return st;
+}
 
 
 // Coculate what to display on each frames
