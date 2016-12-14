@@ -107,16 +107,16 @@ def getState():
     return data['state']
 
 def getMe():
-    return [data['me']['x'], data['me']['y'], data['me']['vx'], data['me']['vy']]
+    return [data['me']['x'], data['me']['y'], data['me']['vx'], data['me']['vy'], data['me']['say']]
 
 def getFriend():
-    return [data['friend']['x'], data['friend']['y'], data['friend']['vx'], data['friend']['vy']]
+    return [data['friend']['x'], data['friend']['y'], data['friend']['vx'], data['friend']['vy'], data['friend']['say']]
 
 def getEnemy1():
-    return [data['enemy1']['x'], data['enemy1']['y'], data['enemy1']['vx'], data['enemy1']['vy']]
+    return [data['enemy1']['x'], data['enemy1']['y'], data['enemy1']['vx'], data['enemy1']['vy'], data['enemy1']['say']]
 
 def getEnemy2():
-    return [data['enemy2']['x'], data['enemy2']['y'], data['enemy2']['vx'], data['enemy2']['vy']]
+    return [data['enemy2']['x'], data['enemy2']['y'], data['enemy2']['vx'], data['enemy2']['vy'], data['enemy2']['say']]
 
 def getRadius():
     return data['radius']
