@@ -89,8 +89,8 @@ function termCoculation() {
                 plist = deepcopyAndFlipXaxis(plist);
             var me = plist[i];
             var friend = plist[2*Math.floor(i/2) + (i%2 ^ 1)];
-            var enemy1 = plist[2*(Math.floor(i/2) ^ 1) + (i%2)];
-            var enemy2 = plist[2*(Math.floor(i/2) ^ 1) + (i%2 ^ 1)];
+            var enemy1 = plist[2*(Math.floor(i/2) ^ 1)];
+            var enemy2 = plist[2*(Math.floor(i/2) ^ 1) + 1];
             var radius = window.game.radius;
             Connector.publishState(agentInfo.name, {
                 state: state,
