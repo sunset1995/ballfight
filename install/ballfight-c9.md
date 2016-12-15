@@ -32,13 +32,13 @@
 1. 按下畫面中最上方寫有 _run_ 的綠色按鈕（之後就可以使用鍵盤上的 `F5` 鍵執行（Mac 請按 `fn + F5`））  
 2. 開啟 Terminal(黑盒子) 並輸入 `python3 hero.py`  
 
-若你用方法 1 或 2 執行，應該會看到以下 SyntaxError    
+若你用方法 1 執行，應該會看到以下 SyntaxError    
 ![](../images/c9-6.png)  
 這是因為預設使用 python2 執行，請按下 Runner 並改選成 Python3 (見下圖)
 ![](../images/c9-7.png)  
 設定完後再次執行就沒問題了。
 
-如果你使用方法 3 執行，與平常 windows cmd 下執行不同的是這邊有 python python3 兩種指令而 window 只有 python。  
+如果你使用方法 2 執行，與平常 windows cmd 下執行不同的是這邊有 `python` `python3` 兩種指令而 window 只有 `python` 一種。  
 留意此處請使用 python3 執行。  
 
 至此已可以成功執行 _hero.py_ 並連上 TA 的伺服器了～
@@ -59,6 +59,6 @@
 請複製 __你自己的伺服器 url__ 而不是上面範例中的  
 改 __hero.py__ 中的連線伺服器  
 ```
-api.play('你自己的伺服器 url', 'yourname', strategy)
+api.play('你自己的伺服器 url', 'demo-room', '君の名', strategy)
 ```
 [競技場](http://snp2016.nctu.me/) 一開始連線設定時請也要記得把 url 改成 __你自己的伺服器 url__  
