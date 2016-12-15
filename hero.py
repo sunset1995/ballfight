@@ -14,4 +14,4 @@ def strategy():
     return [1000, 1000, 'gogo']
 
 
-api.play('ws://demo-bf-sunset1995.c9users.io:8080/ws', 'demo-room', '君の名', strategy)
+api.play('ws://test-ballfight-demo-sunset1995.c9users.io:8080/ws', 'demo-room', '君の名', strategy)
