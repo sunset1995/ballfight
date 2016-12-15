@@ -20,7 +20,7 @@ module.exports['getForce'] = function(who) {
 }
 
 module.exports['getSay'] = function(who) {
-    if( actions[who] ) return actions[who].say;
+    if( actions[who] ) return actions[who].say || '';
     else return '';
 }
 
@@ -75,8 +75,7 @@ $('#connect').click(function() {
                         typeof force[0] === 'number' && 
                         typeof force[1] === 'number' )
                     actions[name].force = force;
-                if( say )
-                    actions[name].say = say;
+                actions[name].say = say || '';
             }
         }
         session.subscribe(roomname+'.action', actionHandler);

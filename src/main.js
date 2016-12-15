@@ -21,7 +21,7 @@ function termCoculation() {
             y: window.game.players[i].y,
             vx: window.game.players[i].vx,
             vy: window.game.players[i].vy,
-            say: window.game.players[i].say,
+            say: window.game.players[i].say || '',
         });
 
 
