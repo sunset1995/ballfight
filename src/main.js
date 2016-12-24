@@ -2,6 +2,7 @@
 var selectionPanel = require('./ui/selectionPanel.js');
 var gameResult = require('./ui/game-result.js');
 var config = require('./config.js');
+var keyboard = require('./keyboard.js');
 var Connector = require('./connector');
 var Agent = require('./agent.js');
 var GameProto = require('./game.js');
@@ -12,7 +13,20 @@ window.game = new GameProto();
 
 
 // Coculate game term
+var debugMode = $('#debug-mode input')[0];
+var keypressCnt = 0;
+var keypressLast = false;
 function termCoculation() {
+
+    let go = true;
+    if( debugMode.checked ) {
+        if( !keyboard.space || (keypressLast!=false && keypressCnt<=5) )
+            go = false;
+        if( keyboard.space ) ++keypressCnt;
+        else keypressCnt = 0;
+        keypressLast = keyboard.space;
+    }
+    if( !go ) return;
 
     var players = []
     for(var i=0; i<4; ++i)

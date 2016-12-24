@@ -179,6 +179,11 @@ html, body {
 .remote-agent {
     text-decoration: underline;
 }
+#debug-mode {
+    text-align: center;
+    font-size: 1em;
+    margin-top: 1em;
+}
 
 
 /* room setting pannel */
