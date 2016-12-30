@@ -61,62 +61,128 @@ module.exports['Berserker'] = function(me, friend, enemy1, enemy2, radius) {
     return [f[0]*100000, f[1]*100000];
 }
 
-module.exports['Escaper'] = function(me, friend, enemy1, enemy2, radius) {
-    var myPos = [me.x, me.y];
-    var mySpeed = [me.vx, me.vy];
-    var enemyPos = [enemy1.x, enemy1.y];
-    var enemySpeed = [enemy1.vx, enemy1.vy];
-    if( dis(enemy1, me) > dis(enemy2, me) ) {
-        enemyPos = [enemy2.x, enemy2.y];
-        enemySpeed = [enemy2.vx, enemy2.vy];
-    }
-    var p = [-myPos[0], -myPos[1]];
-    var pLen = Math.sqrt(p[0]*p[0] + p[1]*p[1]);
-    if( Math.abs(pLen) < 1 )
-        return [0, 0];
-    p[0] /= pLen;
-    p[1] /= pLen;
-    var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
+module.exports['逃跑有用'] = function(me, friend, enemy1, enemy2, radius) {
 
-    if( radius - 60 < pLen ) {
-        var va = f;
-        var vb = myPos;
-        var la = Math.sqrt(va[0]*va[0] + va[1]*va[1]);
-        var lb = Math.sqrt(vb[0]*vb[0] + vb[1]*vb[1]);
-        var dot = va[0]*vb[0] + va[1]*vb[1];
-        if( Math.abs(la)<1 || Math.abs(lb)<1 )
-            return [p[0]*10000, p[1]*10000];
-        var theta = Math.acos(dot/(la*lb));
-        if( theta < Math.PI * 25 / 180 )
-            return [f[0]*10000, f[1]*10000];
-        else
-            return [p[0]*10000, p[1]*10000];
+    let meP = [me.x, me.y];
+    let friendP = [friend.x, friend.y];
+    let enemy1P = [enemy1.x, enemy1.y];
+    let enemy2P = [enemy2.x, enemy2.y];
+    let meV = [me.vx, me.vy];
+    let friendV = [friend.vx, friend.vy];
+    let enemy1V = [enemy1.vx, enemy1.vy];
+    let enemy2V = [enemy2.vx, enemy2.vy];
+    let headEnemy1 = [enemy1P[0]-meP[0], enemy1P[1]-meP[1]];
+    let headEnemy2 = [enemy2P[0]-meP[0], enemy2P[1]-meP[1]];
+
+    function dot(a, b) {
+        return a[0]*b[0] + a[1]*b[1];
+    }
+    function cross(a, b) {
+        return a[0]*b[1] - a[1]*b[0];
+    }
+    function len(a) {
+        return Math.sqrt(dot(a, a));
+    }
+    function dis(a, b) {
+        let dx = a[0] - b[0];
+        let dy = a[1] - b[1];
+        return Math.sqrt(dx*dx + dy*dy);
     }
 
-    var coll = false;
-    var x = enemyPos[0];
-    var y = enemyPos[1];
-    var dx = enemySpeed[0] * 0.025;
-    var dy = enemySpeed[1] * 0.025;
-    for(var i=0; i<13; ++i) {
-        var disx = x - myPos[0];
-        var disy = y - myPos[1];
-        if( Math.sqrt(disx*disx + disy*disy) < 55 ) {
-            coll = true;
-            break;
+    let features = [
+        // Stop near edge & head edge
+        {
+            c: -10,
+            f: (action) => {
+                if( len(action) < 1e-3 ) return 0;
+                if( len(meP) > radius - 75 )
+                    return Math.pow(dot(meP, action), 3);
+                else
+                    return dot(meP, action);
+            },
+        },
+
+        // Fight enemy while ok
+        {
+            c: 3,
+            f: (action, show=false) => {
+                if( len(action) < 1e-3 ) return 0;
+                let ene, eneV;
+                if( len(enemy1P) > radius + 25 ) {
+                    ene = headEnemy2;
+                    eneV = enemy2V;
+                }
+                else if( len(enemy2P) > radius + 25 ) {
+                    ene = headEnemy1;
+                    eneV = enemy2V;
+                }
+                else {
+                    ene = len(headEnemy1) < len(headEnemy2) ? headEnemy1 : headEnemy2;
+                    eneV = len(headEnemy1) < len(headEnemy2) ? enemy1V : enemy2V;
+                }
+                let towardEnemyP = dot(ene, action)/len(action)/len(ene);
+                let towardEnemyV = len(eneV) ? dot(eneV, action)/len(action)/len(eneV) : 0;
+                let towardEnemy = towardEnemyP + towardEnemyV;
+                let pause = -dot(meV, action);
+                if( show ) {
+                    // console.log('=>', ene, eneV)
+                    // console.log('=>', towardEnemyP, towardEnemyV)
+                }
+                if( (dot(ene, eneV) >= 0 || len(eneV) < 300) && towardEnemyP > 0 ) {
+                    if( Math.acos(dot(meV, action)/len(meV)/len(action)) > Math.PI/3 )
+                        return pause * Math.pow(dot(ene, eneV), 3);
+                    return towardEnemy * Math.pow(dot(ene, eneV), 3);
+                }
+                else
+                    return towardEnemy;
+            },
+        },
+
+        // Escape while needed
+        {
+            c: 1,
+            f: (action) => {
+                if( len(action) < 1e-3 ) return 0;
+                let ene = len(headEnemy1) < len(headEnemy2) ? headEnemy1 : headEnemy2;
+                let eneV = len(headEnemy1) < len(headEnemy2) ? enemy1V : enemy2V;
+                if( dot(ene, eneV) < 0 )
+                    return Math.abs(cross(ene, action)) / len(ene) / len(action) * -Math.pow(dot(ene, eneV), 3);
+                else
+                    return Math.abs(cross(ene, action)) / len(ene) / len(action) * -dot(ene, eneV);
+            },
+        },
+    ];
+
+    function Qvalue(action, show=false) {
+        let v = 0;
+        for(let i=0; i<features.length; ++i) {
+            let now = features[i].c * features[i].f(action, show);
+            v += now;
+            // if( show )
+                // console.log(i, now)
         }
-        x += dx;
-        y += dy;
+        return v;
     }
+
+    let bestAction = [0, 0];
+    let bestQV = Qvalue(bestAction);
+
+    let nRad = 1000;
+    for(let i=0; i<nRad; ++i) {
+        let fx = 1000 * Math.cos(2*Math.PI*i/nRad);
+        let fy = 1000 * Math.sin(2*Math.PI*i/nRad);
+        let nowQV = Qvalue([fx, fy]);
+        if( nowQV > bestQV ) {
+            bestQV = nowQV;
+            bestAction = [fx, fy];
+        }
+    }
+
+    // console.log(Qvalue(bestAction, true), bestAction)
+    // console.log('==================================')
     
-    if( coll ) {
-        if( f[1]*myPos[0] - f[0]*myPos[1] < 0 )
-            return [f[1]*10000, -f[0]*10000];
-        else
-            return [-f[1]*10000, f[0]*10000];
-    }
-    else
-        return [-mySpeed[0]*10, -mySpeed[1]*10];
+    return bestAction;
+
 }
 
 module.exports['Center Camper'] = function(me, friend, enemy1, enemy2, radius) {

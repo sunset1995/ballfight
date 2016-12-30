@@ -15,7 +15,8 @@ module.exports['askName'] = function() {
 }
 
 module.exports['getForce'] = function(who) {
-    if( actions[who] ) return actions[who].force;
+    if( actions[who] )
+        return [actions[who].force[0], actions[who].force[1]];
     else return [0, 0];
 }
 
