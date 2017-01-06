@@ -45,6 +45,7 @@ $('#connect').click(function() {
     connection.onclose = function (reason, details) {
        // connection closed, lost or unable to connect
        console.log('Connection was closed due to:', reason);
+       console.log('Detail:', details);
        console.log('connection closed');
        clearInterval(heartbeater);
     };
