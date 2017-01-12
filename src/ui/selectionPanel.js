@@ -70,6 +70,11 @@ var selectionPanel = (function() {
         window.game.start();
     });
 
+    $('#player-clear').click(function() {
+        $('.remote-agent').remove();
+        connectorResetAgent();
+    });
+
     return {
         show: show,
         hide: hide,

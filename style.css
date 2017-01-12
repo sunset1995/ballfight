@@ -160,21 +160,27 @@ html, body {
     color: rgba(255, 255, 255, .8);
     background-color: #FF847B;
 }
-#player-select-done {
+.selection-panel-btn-block button {
+    flex: 1;
+    margin: 0 1em;
     font-size: 1.5em;
     font-style: italic;
     padding: 1em 0;
-    width: 100%;
     text-align: center;
-    color: white;
     border: 0;
     border-radius: 3px;
     cursor: pointer;
+}
+.selection-panel-btn-block button:hover {
+    text-decoration: underline;
+}
+#player-clear {
+    color: white;
+    background-color: #E84A5F;
+}
+#player-select-done {
     color: white;
     background-color: #7fb959;
-}
-#player-select-done:hover {
-    text-decoration: underline;
 }
 .remote-agent {
     text-decoration: underline;

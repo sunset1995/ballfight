@@ -17,10 +17,6 @@ var gameResult = (function() {
         container.style.display = 'none';
     }
 
-    $('#replay').click(function() {
-        console.log('replay TODO');
-    });
-
     $('#restart').click(function() {
         game.init();
         hide();

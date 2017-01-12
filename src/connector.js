@@ -1,17 +1,17 @@
 var selectionPanel = require('./ui/selectionPanel.js');
 var autobahn = require('autobahn');
-var session = null;
+window.session = null;
 var roomname = '';
 var actions = {};
 
 module.exports['publishState'] = function(toWhom, state) {
-    if( session )
-        session.publish(roomname+'.arena.'+toWhom, [], state);
+    if( window.session )
+        window.session.publish(roomname+'.arena.'+toWhom, [], state);
 }
 
 module.exports['askName'] = function() {
-    if( session )
-        session.publish(roomname+'.name.request', [], {});
+    if( window.session )
+        window.session.publish(roomname+'.name.request', [], {});
 }
 
 module.exports['getForce'] = function(who) {
@@ -23,6 +23,11 @@ module.exports['getForce'] = function(who) {
 module.exports['getSay'] = function(who) {
     if( actions[who] ) return actions[who].say || '';
     else return '';
+}
+
+window.connectorResetAgent = function() {
+    actions = {};
+    module.exports['askName']();
 }
 
 
