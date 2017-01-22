@@ -37,8 +37,13 @@ module.exports = {
 
     // Physical engine related
     unitTime: 0.025,
-    maxForce: (r) => {
-        return r * 1000 / 350;
+    restrictedR: [25, 50, 100, 150],
+    maxForce: function(r) {
+        if( r > this.restrictedR[3] ) return 1000;
+        else if( r > this.restrictedR[2] ) return 800;
+        else if( r > this.restrictedR[1] ) return 500;
+        else if( r > this.restrictedR[0] ) return 125;
+        else return r;
     },
     maxSpeed: 500,
 };

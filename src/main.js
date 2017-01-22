@@ -142,7 +142,6 @@ function deepcopyAndFlipYaxis(plist) {
 // Below code has no logic about game
 // Just simply read info from game engine and paint it
 config.restrictedR.forEach((r) => {
-    console.debug(r)
     $('#restrictedArea').append(
         $('<div>').width(r*2).height(r*2)
     );
