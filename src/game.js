@@ -1,10 +1,9 @@
-var config = require('./config.js');
-var Ball = require('./ball.js');
-
+const config = require('./config.js');
+const Ball = require('./ball.js');
 
 
 // Define game class
-var Game = function() {
+const Game = function() {
     this.players = [new Ball(), new Ball(), new Ball(), new Ball()];
     this.init();
     this.state = 'Hello';
@@ -13,7 +12,7 @@ var Game = function() {
 Game.prototype.init = function() {
     if( this.state === '' )
         return;
-    for(var i=0; i<4; ++i) {
+    for(let i=0; i<4; ++i) {
         const initValue = Object.assign({},
             config.playerInit.common,
             config.playerInit.specific[i]
@@ -40,8 +39,8 @@ Game.prototype.next = function() {
     });
 
     // Process collision
-    for(var i=1; i<4; ++i)
-        for(var j=0; j<i; ++j)
+    for(let i=1; i<4; ++i)
+        for(let j=0; j<i; ++j)
             if( this.players[i].isCollisionWith(this.players[j]) )
                 this.players[i].procCollisionWith(this.players[j]);
         

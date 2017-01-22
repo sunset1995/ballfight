@@ -1,11 +1,11 @@
 // Include dependency
-var selectionPanel = require('./ui/selectionPanel.js');
-var gameResult = require('./ui/game-result.js');
-var config = require('./config.js');
-var keyboard = require('./keyboard.js');
-var Connector = require('./connector');
-var Agent = require('./agent.js');
-var GameProto = require('./game.js');
+const selectionPanel = require('./ui/selectionPanel.js');
+const gameResult = require('./ui/game-result.js');
+const config = require('./config.js');
+const keyboard = require('./keyboard.js');
+const Connector = require('./connector');
+const Agent = require('./agent.js');
+const GameProto = require('./game.js');
 
 // Shared variable
 window.game = new GameProto();
@@ -13,9 +13,9 @@ window.game = new GameProto();
 
 
 // Coculate game term
-var debugMode = $('#debug-mode input')[0];
-var keypressCnt = 0;
-var keypressLast = false;
+const debugMode = $('#debug-mode input')[0];
+let keypressCnt = 0;
+let keypressLast = false;
 function termCoculation() {
 
     let go = true;
@@ -28,8 +28,8 @@ function termCoculation() {
     }
     if( !go ) return;
 
-    var players = []
-    for(var i=0; i<4; ++i)
+    let players = []
+    for(let i=0; i<4; ++i)
         players.push({
             x: window.game.players[i].x,
             y: window.game.players[i].y,
@@ -39,18 +39,18 @@ function termCoculation() {
         });
 
 
-    for(var i=0; i<4; ++i) {
+    for(let i=0; i<4; ++i) {
         if( !selectionPanel.players[i] )
             continue;
         try {
-            var agentInfo = selectionPanel.players[i];
-            var force = [0, 0];
+            let agentInfo = selectionPanel.players[i];
+            let force = [0, 0];
             if( agentInfo.type === 'local-agent' ) {
-                var me = players[i];
-                var friend = players[2*Math.floor(i/2) + (i%2 ^ 1)];
-                var enemy1 = players[2*(Math.floor(i/2) ^ 1)];
-                var enemy2 = players[2*(Math.floor(i/2) ^ 1) + 1];
-                var radius = window.game.radius;
+                let me = players[i];
+                let friend = players[2*Math.floor(i/2) + (i%2 ^ 1)];
+                let enemy1 = players[2*(Math.floor(i/2) ^ 1)];
+                let enemy2 = players[2*(Math.floor(i/2) ^ 1) + 1];
+                let radius = window.game.radius;
                 force = Agent[agentInfo.name](me, friend, enemy1, enemy2, radius);
             }
             else {
@@ -87,12 +87,12 @@ function termCoculation() {
         ],
         radius: window.game.radius,
     });
-    for(var i=0; i<4; ++i) {
-        var agentInfo = selectionPanel.players[i];
+    for(let i=0; i<4; ++i) {
+        let agentInfo = selectionPanel.players[i];
         if( !agentInfo ) continue;
         if( agentInfo.type === 'remote-agent' ) {
-            var state = window.game.state;
-            var plist = players;
+            let state = window.game.state;
+            let plist = players;
             if( i==1 )
                 plist = deepcopyAndFlipYaxis(plist);
             else if( i==2 ) {
@@ -101,11 +101,11 @@ function termCoculation() {
             }
             else if( i==3 )
                 plist = deepcopyAndFlipXaxis(plist);
-            var me = plist[i];
-            var friend = plist[2*Math.floor(i/2) + (i%2 ^ 1)];
-            var enemy1 = plist[2*(Math.floor(i/2) ^ 1)];
-            var enemy2 = plist[2*(Math.floor(i/2) ^ 1) + 1];
-            var radius = window.game.radius;
+            let me = plist[i];
+            let friend = plist[2*Math.floor(i/2) + (i%2 ^ 1)];
+            let enemy1 = plist[2*(Math.floor(i/2) ^ 1)];
+            let enemy2 = plist[2*(Math.floor(i/2) ^ 1) + 1];
+            let radius = window.game.radius;
             Connector.publishState(agentInfo.name, {
                 state: state,
                 me: me,
@@ -121,16 +121,16 @@ setInterval(termCoculation, config.interval);
 
 // Helper function
 function deepcopyAndFlipXaxis(plist) {
-    var st = JSON.parse(JSON.stringify(plist));
-    for(var i=0; i<4; ++i) {
+    let st = JSON.parse(JSON.stringify(plist));
+    for(let i=0; i<4; ++i) {
         st[i].y *= -1;
         st[i].vy *= -1;
     }
     return st;
 }
 function deepcopyAndFlipYaxis(plist) {
-    var st = JSON.parse(JSON.stringify(plist));
-    for(var i=0; i<4; ++i) {
+    let st = JSON.parse(JSON.stringify(plist));
+    for(let i=0; i<4; ++i) {
         st[i].x *= -1;
         st[i].vx *= -1;
     }
@@ -141,19 +141,19 @@ function deepcopyAndFlipYaxis(plist) {
 // Coculate what to display on each frames
 // Below code has no logic about game
 // Just simply read info from game engine and paint it
-var arenaDOM = $('#arena')[0];
-var playersDOM = [$('#p0')[0], $('#p1')[0], $('#p2')[0], $('#p3')[0]];
-var stateDOM = $('#state')[0];
-var lastState = null;
+const arenaDOM = $('#arena')[0];
+const playersDOM = [$('#p0')[0], $('#p1')[0], $('#p2')[0], $('#p3')[0]];
+const stateDOM = $('#state')[0];
+let lastState = null;
 
 function frameCoculation() {
     // read
-    var arena = arenaDOM.getBoundingClientRect();
-    var oX = document.body.getBoundingClientRect().width / 2;
-    var oY = document.body.getBoundingClientRect().height / 2;
-    var pX = [];
-    var pY = [];
-    for(var i=0; i<4; ++i) {
+    let arena = arenaDOM.getBoundingClientRect();
+    let oX = document.body.getBoundingClientRect().width / 2;
+    let oY = document.body.getBoundingClientRect().height / 2;
+    let pX = [];
+    let pY = [];
+    for(let i=0; i<4; ++i) {
         pX.push(oX + window.game.players[i].x);
         pY.push(oY + window.game.players[i].y);
     }
@@ -161,7 +161,7 @@ function frameCoculation() {
     // write
     arenaDOM.style.width = (2*window.game.radius) + 'px';
     arenaDOM.style.height = (2*window.game.radius) + 'px';
-    for(var i=0; i<4; ++i) {
+    for(let i=0; i<4; ++i) {
         playersDOM[i].style.transform = 'translate('+pX[i]+'px, '+pY[i]+'px)';
         playersDOM[i].style.transform = 'translate3d('+pX[i]+'px, '+pY[i]+'px, 0)';
     }

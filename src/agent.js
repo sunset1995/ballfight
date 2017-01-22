@@ -1,8 +1,8 @@
-var keyboard = require('./keyboard.js');
+const keyboard = require('./keyboard.js');
 
 function dis(a, b) {
-    var dx = a.x-b.x;
-    var dy = a.y-b.y;
+    let dx = a.x-b.x;
+    let dy = a.y-b.y;
     return Math.sqrt(dx*dx + dy*dy);
 }
 
@@ -16,9 +16,9 @@ module.exports[''] = function(me, friend, enemy1, enemy2, radius) {
 }
 
 module.exports['Loser'] = function(me, friend, enemy1, enemy2, radius) {
-    var myPos = [me.x, me.y];
-    var f = [-myPos[0], -myPos[1]];
-    var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
+    let myPos = [me.x, me.y];
+    let f = [-myPos[0], -myPos[1]];
+    let fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
     if( Math.abs(fLen) < 1 )
         return f;
     f[0] = f[0]*100/fLen - myPos[0];
@@ -27,11 +27,11 @@ module.exports['Loser'] = function(me, friend, enemy1, enemy2, radius) {
 }
 
 module.exports['Softer'] = function(me, friend, enemy1, enemy2, radius) {
-    var myPos = [me.x, me.y];
-    var enemyPos = [(enemy1.x+enemy2.x)/2, (enemy1.y+enemy2.y)/2];
-    var enemySpeed = [(enemy1.vx+enemy2.vx)/2, (enemy1.vy+enemy2.vy)/2];
-    var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
-    var fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
+    let myPos = [me.x, me.y];
+    let enemyPos = [(enemy1.x+enemy2.x)/2, (enemy1.y+enemy2.y)/2];
+    let enemySpeed = [(enemy1.vx+enemy2.vx)/2, (enemy1.vy+enemy2.vy)/2];
+    let f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
+    let fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
     if( Math.abs(fLen) < 1 )
         return f;
     f[0] /= fLen*0.022;
@@ -42,22 +42,22 @@ module.exports['Softer'] = function(me, friend, enemy1, enemy2, radius) {
 }
 
 module.exports['Brownian'] = function(me, friend, enemy1, enemy2, radius) {
-    var myPos = [me.x, me.y];
+    let myPos = [me.x, me.y];
     if( myPos[0]*myPos[0] + myPos[1]*myPos[1] > (radius-25)*(radius-25))
         return [-myPos[0]*1000, -myPos[1]*1000];
 
-    var theta = Math.random()*2*Math.PI;
+    let theta = Math.random()*2*Math.PI;
     return [1000*Math.cos(theta), 1000*Math.sin(theta)];
 }
 
 module.exports['Berserker'] = function(me, friend, enemy1, enemy2, radius) {
-    var myPos = [me.x, me.y];
-    var enemyPos = [enemy1.x, enemy1.y];
+    let myPos = [me.x, me.y];
+    let enemyPos = [enemy1.x, enemy1.y];
     if( disO(enemy1)>radius || 
             disO(enemy2)<radius &&
             dis(enemy1, me) > dis(enemy2, me) )
         enemyPos = [enemy2.x, enemy2.y];
-    var f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
+    let f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
     return [f[0]*100000, f[1]*100000];
 }
 
@@ -186,15 +186,15 @@ module.exports['逃跑有用'] = function(me, friend, enemy1, enemy2, radius) {
 }
 
 module.exports['Center Camper'] = function(me, friend, enemy1, enemy2, radius) {
-    var myPos = [me.x, me.y];
-    var f = [-myPos[0], -myPos[1]];
+    let myPos = [me.x, me.y];
+    let f = [-myPos[0], -myPos[1]];
     f[0] = f[0]*100000;
     f[1] = f[1]*100000;
     return f;
 }
 
 module.exports['WASD space'] = function(me, friend, enemy1, enemy2, radius) {
-    var f = [0, 0];
+    let f = [0, 0];
     if( keyboard.d ) f[0] += 300;
     if( keyboard.a ) f[0] -= 300;
     if( keyboard.s ) f[1] += 300;
@@ -204,7 +204,7 @@ module.exports['WASD space'] = function(me, friend, enemy1, enemy2, radius) {
 }
 
 module.exports['↑←↓→ enter'] = function(me, friend, enemy1, enemy2, radius) {
-    var f = [0, 0];
+    let f = [0, 0];
     if( keyboard.right ) f[0] += 300;
     if( keyboard.left ) f[0] -= 300;
     if( keyboard.down ) f[1] += 300;

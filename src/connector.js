@@ -1,8 +1,8 @@
-var selectionPanel = require('./ui/selectionPanel.js');
-var autobahn = require('autobahn');
+const selectionPanel = require('./ui/selectionPanel.js');
+const autobahn = require('autobahn');
 window.session = null;
-var roomname = '';
-var actions = {};
+let roomname = '';
+let actions = {};
 
 module.exports['publishState'] = function(toWhom, state) {
     if( window.session )
@@ -36,13 +36,13 @@ $('#connect').click(function() {
     $('#connect-panel')[0].style.display = 'none';
     selectionPanel.show();
 
-    var connection = new autobahn.Connection({
+    const connection = new autobahn.Connection({
         url: $('#url').val(),
         realm: 'ballfight',
     });
     roomname = $('#room').val();
 
-    var heartbeater = setInterval(function() {
+    const heartbeater = setInterval(function() {
         if( session )
             session.publish('heartbeat', [], {});
     }, 5000);
@@ -74,9 +74,9 @@ $('#connect').click(function() {
 
 
         function actionHandler(args, kwargs, details) {
-            var name = kwargs.name;
-            var force = kwargs.force;
-            var say = kwargs.say;
+            let name = kwargs.name;
+            let force = kwargs.force;
+            let say = kwargs.say;
             if( typeof name === 'string' ) {
                 if( typeof force === 'object' && 
                         typeof force[0] === 'number' && 
