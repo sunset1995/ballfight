@@ -45,5 +45,4 @@ module.exports = {
         else if( r > this.restrictedR[0] ) return 125;
         else return r;
     },
-    maxSpeed: 500,
 };

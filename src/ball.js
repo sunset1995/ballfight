@@ -39,7 +39,7 @@ Ball.prototype.init = function(initValue) {
     this.ay = initValue.ay || 0;
     this.fx = initValue.fx || 0;
     this.fy = initValue.fy || 0;
-    this.k = 0.5;
+    this.k = 1;
 };
 
 Ball.prototype.stop = function() {
@@ -68,11 +68,6 @@ Ball.prototype.next = function() {
 
     this.vx = this.vx + this.ax * config.unitTime;
     this.vy = this.vy + this.ay * config.unitTime;
-    let len = vectorLength([this.vx, this.vy]);
-    if( len > config.maxSpeed ) {
-        this.vx *= config.maxSpeed / len;
-        this.vy *= config.maxSpeed / len;
-    }
 
     this.x = floorEPS(this.x);
     this.y = floorEPS(this.y);
