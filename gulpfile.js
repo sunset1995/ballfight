@@ -1,33 +1,34 @@
-var gulp = require('gulp');
-var uglify = require('gulp-uglify')
-var browserify = require('gulp-browserify');
-var babel = require('gulp-babel');
+const fs = require('fs');
+const gulp = require('gulp');
+const uglify = require('gulp-uglify');
+const browserify = require("browserify");
+const babelify = require('babelify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 
 
+gulp.task('default', () => {
 
-gulp.task('default', ['main']);
-gulp.task('debug', ['main-debug']);
-
-
-gulp.task('main', () => {
-    return gulp.src('src/main.js')
-        .pipe(browserify())
-        .pipe(babel({
-            presets: ['es2015'],
-            compact: true,
-        }))
+    browserify('src/main.js')
+        .transform("babelify", { presets: ["es2015"] })
+        .bundle()
+        .pipe(source('./main.js'))
+        .pipe(buffer())
         .pipe(uglify())
         .pipe(gulp.dest('./'));
+
 });
 
-gulp.task('main-debug', () => {
-    return gulp.src('src/main.js')
-        .pipe(browserify({
-            debug: true,
-        }))
-        .pipe(babel({
-            presets: ['es2015'],
-            compact: false,
-        }))
+
+gulp.task('debug', () => {
+    
+    browserify('src/main.js', {
+            debug: true
+        })
+        .transform("babelify", { presets: ["es2015"] })
+        .bundle()
+        .pipe(source('./main.js'))
+        .pipe(buffer())
         .pipe(gulp.dest('./'));
+
 });
