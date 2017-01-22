@@ -141,7 +141,7 @@ function deepcopyAndFlipYaxis(plist) {
 // Coculate what to display on each frames
 // Below code has no logic about game
 // Just simply read info from game engine and paint it
-$('#restrictedArea').width(config.restrictedR).height(config.restrictedR);
+$('#restrictedArea').width(config.restrictedR*2).height(config.restrictedR*2);
 const arenaDOM = $('#arena')[0];
 const playersDOM = [$('#p0')[0], $('#p1')[0], $('#p2')[0], $('#p3')[0]];
 const stateDOM = $('#state')[0];
