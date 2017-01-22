@@ -26,7 +26,7 @@ html, body {
     
     will-change: transform;
 }
-#restrictedArea {
+#restrictedArea > div {
     position: absolute;
     top: 50%;
     left: 50%;
