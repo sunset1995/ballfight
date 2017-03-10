@@ -39,7 +39,7 @@ Ball.prototype.init = function(initValue) {
     this.ay = initValue.ay || 0;
     this.fx = initValue.fx || 0;
     this.fy = initValue.fy || 0;
-    this.k = 1;
+    this.k = config.k;
 };
 
 Ball.prototype.stop = function() {
