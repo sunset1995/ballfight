@@ -138,14 +138,18 @@ function deepcopyAndFlipYaxis(plist) {
 }
 
 
+// Draw visual restrct line on arena
+for(let i=350,nowF=1000; i>=0 && nowF>50; --i)
+    if( config.maxForce(i) < nowF / 2 ) {
+        $('#restrictedArea').append(
+            $('<div>').width(i*2).height(i*2)
+        );
+        nowF /= 2;
+    }
+
 // Coculate what to display on each frames
 // Below code has no logic about game
 // Just simply read info from game engine and paint it
-config.restrictedR.forEach((r) => {
-    $('#restrictedArea').append(
-        $('<div>').width(r*2).height(r*2)
-    );
-});
 const arenaDOM = $('#arena')[0];
 const playersDOM = [$('#p0')[0], $('#p1')[0], $('#p2')[0], $('#p3')[0]];
 const stateDOM = $('#state')[0];
