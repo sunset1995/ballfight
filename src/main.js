@@ -10,6 +10,20 @@ const GameProto = require('./game.js');
 // Shared variable
 window.game = new GameProto();
 
+// Debugging
+$('#set-k').val(config.k);
+$('#set-func').val('(' + config.maxForce.toString() + ')');
+$('#set-done').click(function() {
+    let k = parseFloat($('#set-k').val());
+    let func = eval($('#set-func').val().toString());
+
+    config.k = k;
+    for(let i=0; i<4; ++i)
+        window.game.players[i].k = k;
+    config.maxForce = func;
+
+    drawRestrctedLine();
+});
 
 
 // Coculate game term
@@ -139,13 +153,18 @@ function deepcopyAndFlipYaxis(plist) {
 
 
 // Draw visual restrct line on arena
-for(let i=350,nowF=1000; i>=0 && nowF>50; --i)
-    if( config.maxForce(i) < nowF / 2 ) {
-        $('#restrictedArea').append(
-            $('<div>').width(i*2).height(i*2)
-        );
-        nowF /= 2;
-    }
+function drawRestrctedLine() {
+    $('#restrictedArea').html('');
+    for(let i=350,nowF=1000; i>=0 && nowF>50; --i)
+        if( config.maxForce(i) < nowF / 2 ) {
+            $('#restrictedArea').append(
+                $('<div>').width(i*2).height(i*2)
+            );
+            nowF /= 2;
+        }
+}
+drawRestrctedLine();
+
 
 // Coculate what to display on each frames
 // Below code has no logic about game
