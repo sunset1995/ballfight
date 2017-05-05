@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/sunset1995/ballfight#readme",
   "dependencies": {
-    "autobahn": "^0.10.1"
+    "autobahn": "^0.10.1",
+    "babel-loader": "^6.4.1",
+    "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony"
   },
   "devDependencies": {
     "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony",
