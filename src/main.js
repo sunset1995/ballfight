@@ -204,7 +204,7 @@ function frameCoculation() {
         playersDOM[i].style.transform = 'translate3d('+pX[i]+'px, '+pY[i]+'px, 0)';
         if( window.game.players[i].isLock() ) {
             playersDOM[i].style.borderWidth = '2px';
-            playersDOM[i].style.borderColor = '#ffa0a0';
+            playersDOM[i].style.borderColor = 'white';
             playersDOM[i].style.borderStyle = 'dashed';
         }
         else {
