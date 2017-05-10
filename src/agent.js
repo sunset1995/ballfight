@@ -1,4 +1,5 @@
 const keyboard = require('./keyboard.js');
+const Ball = require('./ball.js');
 
 function dis(a, b) {
     return Math.hypot(a.x-b.x, a.y-b.y);
@@ -70,42 +71,36 @@ module.exports['逃跑有用'] = function(me, friend, enemy1, enemy2, radius) {
         enemySpeed = [enemy2.vx, enemy2.vy];
     }
     let p = [-myPos[0], -myPos[1]];
-    let pLen = Math.sqrt(p[0]*p[0] + p[1]*p[1]);
+    let pLen = Math.hypot(p[0], p[1]);
     if( Math.abs(pLen) < 1 )
         return [0, 0];
     p[0] /= pLen;
     p[1] /= pLen;
     let f = [enemyPos[0]-myPos[0], enemyPos[1]-myPos[1]];
 
-    if( radius - 60 < pLen ) {
-        let va = f;
-        let vb = myPos;
-        let la = Math.sqrt(va[0]*va[0] + va[1]*va[1]);
-        let lb = Math.sqrt(vb[0]*vb[0] + vb[1]*vb[1]);
-        let dot = va[0]*vb[0] + va[1]*vb[1];
-        if( Math.abs(la)<1 || Math.abs(lb)<1 )
-            return [p[0]*10000, p[1]*10000];
-        let theta = Math.acos(dot/(la*lb));
-        if( theta < Math.PI * 25 / 180 )
-            return [f[0]*10000, f[1]*10000];
-        else
-            return [p[0]*10000, p[1]*10000];
-    }
+    if( radius - 60 < pLen )
+        return [p[0]*10000, p[1]*10000];
 
     let coll = false;
-    let x = enemyPos[0];
-    let y = enemyPos[1];
-    let dx = enemySpeed[0] * 0.025;
-    let dy = enemySpeed[1] * 0.025;
+    let fake_enemy = new Ball({
+        x: enemyPos[0],
+        y: enemyPos[1],
+        vx: enemySpeed[0],
+        vy: enemySpeed[1],
+    });
+    let fake_me = new Ball({
+        x: myPos[0],
+        y: myPos[1],
+        vx: mySpeed[0],
+        vy: mySpeed[1],
+    });
     for(let i=0; i<13; ++i) {
-        let disx = x - myPos[0];
-        let disy = y - myPos[1];
-        if( Math.sqrt(disx*disx + disy*disy) < 55 ) {
+        if( fake_me.isCollisionWith(fake_enemy) ) {
             coll = true;
             break;
         }
-        x += dx;
-        y += dy;
+        fake_enemy.next();
+        fake_me.next();
     }
     
     if( coll ) {
