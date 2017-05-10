@@ -13,16 +13,23 @@ window.game = new GameProto();
 // Debugging
 $('#set-k').val(config.k);
 $('#set-func').val('(' + config.maxForce.toString() + ')');
+$('#set-no-force').val(config.noForce);
+$('#noforceArea').css('width', (config.noForce + config.ballRadius) * 2);
+$('#noforceArea').css('height', (config.noForce + config.ballRadius) * 2);
 $('#set-done').click(function() {
     let k = parseFloat($('#set-k').val());
     let func = eval($('#set-func').val().toString());
+    let noForce = parseFloat($('#set-no-force').val());
 
     config.k = k;
     for(let i=0; i<4; ++i)
         window.game.players[i].k = k;
     config.maxForce = func;
+    config.noForce = noForce;
 
     drawRestrctedLine();
+    $('#noforceArea').css('width', (config.noForce + config.ballRadius) * 2);
+    $('#noforceArea').css('height', (config.noForce + config.ballRadius) * 2);
 });
 
 

@@ -38,7 +38,8 @@ module.exports = {
     // Physical engine related
     k: 1,
     unitTime: 0.030,
+    noForce: 100,
     maxForce: function(r) {
-        return 1000 * r / 350;
+        return 1000;
     },
 };

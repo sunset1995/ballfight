@@ -49,6 +49,8 @@ Ball.prototype.stop = function() {
 }
 
 Ball.prototype.applyForce = function(force) {
+    if( Math.hypot(this.x, this.y) < config.noForce )
+        return;
     force[0] = force[0] || 0;
     force[1] = force[1] || 0;
     applyNoise(force);
