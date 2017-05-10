@@ -116,6 +116,21 @@ module.exports['逃跑有用'] = function(me, friend, enemy1, enemy2, radius) {
 
 module.exports['__debug_agent__'] = (function(me, friend, enemy1, enemy2, radius) { return [100, 100]; });
 
+module.exports['耍廢無罪'] = function(me, friend, enemy1, enemy2, radius) {
+    let f = [-me.x * 10000, -me.y * 10000];
+    let fake_me = new Ball(me);
+    fake_me.applyForce(f);
+    fake_me.next();
+    if( fake_me.isLock() )
+        return [0, 0];
+    for(let i=0; i<7; ++i) {
+        if( fake_me.isLock() )
+            return [-me.vx*5, -me.vy*5];
+        fake_me.next();
+    }
+    return f;
+}
+
 module.exports['Center Camper'] = function(me, friend, enemy1, enemy2, radius) {
     let myPos = [me.x, me.y];
     let f = [-myPos[0], -myPos[1]];
