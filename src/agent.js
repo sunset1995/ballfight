@@ -1,13 +1,11 @@
 const keyboard = require('./keyboard.js');
 
 function dis(a, b) {
-    let dx = a.x-b.x;
-    let dy = a.y-b.y;
-    return Math.sqrt(dx*dx + dy*dy);
+    return Math.hypot(a.x-b.x, a.y-b.y);
 }
 
 function disO(a) {
-    return Math.sqrt(a.x*a.x + a.y*a.y);
+    return Math.hypot(a.x, a.y);
 }
 
 module.exports = {};
@@ -18,7 +16,7 @@ module.exports[''] = function(me, friend, enemy1, enemy2, radius) {
 module.exports['Loser'] = function(me, friend, enemy1, enemy2, radius) {
     let myPos = [me.x, me.y];
     let f = [-myPos[0], -myPos[1]];
-    let fLen = Math.sqrt(f[0]*f[0] + f[1]*f[1]);
+    let fLen = Math.hypot(f[0], f[1]);
     if( Math.abs(fLen) < 1 )
         return f;
     f[0] = f[0]*100/fLen - myPos[0];
@@ -120,6 +118,8 @@ module.exports['逃跑有用'] = function(me, friend, enemy1, enemy2, radius) {
         return [-mySpeed[0]*10, -mySpeed[1]*10];
 
 }
+
+module.exports['__debug_agent__'] = (function(me, friend, enemy1, enemy2, radius) { return [100, 100]; });
 
 module.exports['Center Camper'] = function(me, friend, enemy1, enemy2, radius) {
     let myPos = [me.x, me.y];
