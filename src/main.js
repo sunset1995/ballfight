@@ -15,8 +15,8 @@ $('#set-k').val(config.k);
 $('#set-func').val('(' + config.maxForce.toString() + ')');
 $('#set-debug-agent').val('(function(me, friend, enemy1, enemy2, radius) { return [100, 100]; })');
 $('#set-no-force').val(config.noForce);
-$('#noforceArea').css('width', (config.noForce + config.ballRadius) * 2);
-$('#noforceArea').css('height', (config.noForce + config.ballRadius) * 2);
+$('#noforceArea').css('width', config.noForce * 2 + config.ballRadius);
+$('#noforceArea').css('height', config.noForce * 2 + config.ballRadius);
 $('#set-done').click(function() {
     let k = parseFloat($('#set-k').val());
     let func = eval($('#set-func').val().toString());
@@ -31,8 +31,8 @@ $('#set-done').click(function() {
     Agent['__debug_agent__'] = debugAgent;
 
     drawRestrctedLine();
-    $('#noforceArea').css('width', (config.noForce + config.ballRadius) * 2);
-    $('#noforceArea').css('height', (config.noForce + config.ballRadius) * 2);
+    $('#noforceArea').css('width', config.noForce * 2 + config.ballRadius);
+    $('#noforceArea').css('height', config.noForce * 2 + config.ballRadius);
 });
 
 
