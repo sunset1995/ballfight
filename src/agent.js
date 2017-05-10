@@ -94,7 +94,7 @@ module.exports['逃跑有用'] = function(me, friend, enemy1, enemy2, radius) {
         vx: mySpeed[0],
         vy: mySpeed[1],
     });
-    for(let i=0; i<13; ++i) {
+    for(let i=0; i<16; ++i) {
         if( fake_me.isCollisionWith(fake_enemy) ) {
             coll = true;
             break;

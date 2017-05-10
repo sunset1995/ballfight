@@ -21,6 +21,9 @@ function applyNoise(f) {
     f[0] = flen * Math.cos(rad);
     f[1] = flen * Math.sin(rad);
 }
+function isLock(x, y) {
+    return Math.hypot(x, y) < config.noForce;
+}
 
 
 
@@ -49,7 +52,7 @@ Ball.prototype.stop = function() {
 }
 
 Ball.prototype.applyForce = function(force) {
-    if( Math.hypot(this.x, this.y) < config.noForce )
+    if( this.isLock() )
         return;
     force[0] = force[0] || 0;
     force[1] = force[1] || 0;
@@ -62,6 +65,10 @@ Ball.prototype.applyForce = function(force) {
     }
     this.fx = floorEPS(force[0]) || 0;
     this.fy = floorEPS(force[1]) || 0;
+};
+
+Ball.prototype.isLock = function() {
+    return isLock(this.x, this.y);
 };
 
 Ball.prototype.next = function() {

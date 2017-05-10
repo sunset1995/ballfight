@@ -202,6 +202,16 @@ function frameCoculation() {
     for(let i=0; i<4; ++i) {
         playersDOM[i].style.transform = 'translate('+pX[i]+'px, '+pY[i]+'px)';
         playersDOM[i].style.transform = 'translate3d('+pX[i]+'px, '+pY[i]+'px, 0)';
+        if( window.game.players[i].isLock() ) {
+            playersDOM[i].style.borderWidth = '2px';
+            playersDOM[i].style.borderColor = '#ffa0a0';
+            playersDOM[i].style.borderStyle = 'dashed';
+        }
+        else {
+            playersDOM[i].style.borderWidth = '';
+            playersDOM[i].style.borderColor = '';
+            playersDOM[i].style.borderStyle = '';
+        }
     }
 
     stateDOM.textContent = window.game.state;
