@@ -14,7 +14,7 @@ module.exports[''] = function(me, friend, enemy1, enemy2, radius) {
     return [0, 0];
 }
 
-module.exports['Loser'] = function(me, friend, enemy1, enemy2, radius) {
+module.exports['魯蛇'] = function(me, friend, enemy1, enemy2, radius) {
     let myPos = [me.x, me.y];
     let f = [-myPos[0], -myPos[1]];
     let fLen = Math.hypot(f[0], f[1]);
