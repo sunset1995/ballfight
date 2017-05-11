@@ -72,6 +72,11 @@ module.exports['逃跑有用'] = function(me, friend, enemy1, enemy2, radius) {
     }
     let p = [-myPos[0], -myPos[1]];
     let pLen = Math.hypot(p[0], p[1]);
+    if( radius < 175 ) {
+        if( Math.hypot(enemy1.x, enemy1.y) < Math.hypot(enemy2.x, enemy2.y) )
+            return [(enemy1.x - me.x)*100000, (enemy1.y - me.y)*100000];
+        return [(enemy2.x - me.x)*100000, (enemy2.y - me.y)*100000];
+    }
     if( Math.abs(pLen) < 1 )
         return [0, 0];
     p[0] /= pLen;
