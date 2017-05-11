@@ -2,7 +2,7 @@
 
 ![競技場螢幕截圖](images/arena.png)  
 遊戲有三個元件：
-- [競技場](http://snp2016.nctu.me/)：請用電腦瀏覽器打開，為遊戲進行的場所
+- [競技場](http://ballfight.nctu.me/)：請用電腦瀏覽器打開，為遊戲進行的場所
 - hero.py：你可以撰寫你的策略並註冊到競技場中，以下幾種平台的教學
     - [在 windows 上](install/ballfight-windows.md)
     - [在 mac 上](install/ballfight-mac.md)
