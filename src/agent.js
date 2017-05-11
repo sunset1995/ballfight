@@ -114,8 +114,6 @@ module.exports['逃跑有用'] = function(me, friend, enemy1, enemy2, radius) {
 
 }
 
-module.exports['__debug_agent__'] = (function(me, friend, enemy1, enemy2, radius) { return [100, 100]; });
-
 module.exports['耍廢無罪'] = function(me, friend, enemy1, enemy2, radius) {
     let f = [-me.x * 10000, -me.y * 10000];
     let fake_me = new Ball(me);
