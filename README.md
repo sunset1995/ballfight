@@ -9,7 +9,7 @@
     - [在 ubuntu 上](install/ballfight-ubuntu.md)
     - [在 c9 上](install/ballfight-c9.md)
 
-有任何問題請用力地把信寄給 `s2821d3721@gmail.com`  
+有任何問題請寄信至 `s2821d3721@gmail.com`  
 
 
 
