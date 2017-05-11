@@ -1,7 +1,7 @@
 # 在 Ubuntu 上設定 hero.py
 
 ### 下載與安裝
-下載 [hero.py for Ubuntu](http://snp2016.nctu.me/ballfight-ubuntu.zip) 並解壓縮  
+下載 [hero.py for Ubuntu](http://ballfight.nctu.me/ballfight-ubuntu.zip) 並解壓縮  
 開啟 terminal，利用指令 `cd` 進入剛剛解壓縮後的 _ballfight-ubuntu_ 資料夾  
 輸入以下指令安裝 dependency
 ```

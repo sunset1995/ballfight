@@ -61,4 +61,4 @@
 ```
 api.play('你自己的伺服器 url', 'demo-room', '君の名', strategy)
 ```
-[競技場](http://snp2016.nctu.me/) 一開始連線設定時請也要記得把 url 改成 __你自己的伺服器 url__  
+[競技場](http://ballfight.nctu.me/) 一開始連線設定時請也要記得把 url 改成 __你自己的伺服器 url__  
