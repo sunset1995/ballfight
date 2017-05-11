@@ -16,8 +16,6 @@ $('#set-k').val(config.k);
 $('#set-func').val('(' + config.maxForce.toString() + ')');
 $('#set-debug-agent').val('(function(me, friend, enemy1, enemy2, radius) { return [100, 100]; })');
 $('#set-no-force').val(config.noForce);
-$('#noforceArea').css('width', config.noForce * 2 + config.ballRadius);
-$('#noforceArea').css('height', config.noForce * 2 + config.ballRadius);
 $('#set-done').click(function() {
     let k = parseFloat($('#set-k').val());
     let func = eval($('#set-func').val().toString());
@@ -176,6 +174,11 @@ function drawRestrctedLine() {
         }
 }
 drawRestrctedLine();
+
+
+// Draw no force area
+$('#noforceArea').css('width', config.noForce * 2 + config.ballRadius);
+$('#noforceArea').css('height', config.noForce * 2 + config.ballRadius);
 
 
 // Coculate what to display on each frames
