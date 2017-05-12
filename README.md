@@ -130,3 +130,21 @@ api.play('ws://sunset.nctu.me:8080/ws', 'demo-room', '君の名', strategy)
 
 ### 執行
 在黑盒子(terminal)進入 _hero.py_ 所在資料夾，執行 `python3 hero.py` 即會向該競技場註冊妳的策略。  
+
+
+
+
+## 附錄：二維幾何公式
+
+- 點 `(x, y)` 與原心的距離
+    - ![equation](http://latex.codecogs.com/gif.latex?%5Csqrt%7Bx%5E2%2By%5E2%7D)
+- 兩點 `(x1, y1)`，`(x2, y2)` 之間的距離
+    - ![equation](http://latex.codecogs.com/gif.latex?%5Csqrt%7B%28x_1-x_2%29%5E2%2B%28y_1-y_2%29%5E2%7D)
+- 在 `(x, y)` 往原心方向施力
+    - `(-x, -y)`
+- 在 `(x1, y1)` 往 `(x2, y2)` 的方向施力
+    - `(x2-x1, y2-y1)`
+- 施力 `(fx, fy)` 想要不改變方向但改變施力大小為 `r`
+    - 不想改變方向只想改變大小兩個維度必須乘上同一個數 i.e. `(fx * C, fy * C)`
+    - 原本施力大小為 ![equation](http://latex.codecogs.com/gif.latex?R%3D%5Csqrt%7Bfx%5E2%2Bfy%5E2%7D)
+    - ![equation](http://latex.codecogs.com/gif.latex?C%3D%5Cfrac%7Br%7D%7BR%7D)
