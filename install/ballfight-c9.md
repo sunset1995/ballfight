@@ -24,6 +24,25 @@
     ![](../images/c9-4.png)  
 
 
+## 開啟伺服器
+伺服器所需的套件與基本設定已在你執行上面的 `./init-c9.sh` 時都做好了，此處只需要把伺服器開啟。  
+1. 在下方 Panel 中找到 _綠色的 +_ 按鈕按下並選擇 _New Run Configuration_(見下圖)
+    ![](../images/c9-server-0.png)  
+2. 按下 Runner 並選 Crossbar(見下圖)
+    ![](../images/c9-server-1.png)  
+3. __在 Runner 設成 Crossbar__ 的分頁按下該分頁左邊的綠色 Run 按鈕伺服器就會跑起來了
+    ![](../images/c9-server-final.png)  
+
+跑起來後，顯示資訊第一行 _Ballfight wamp router started at: ws://myname-ballfight-sunset1995.c9users.io:8080/ws_ (如上圖)  
+其中 `ws://myname-ballfight-sunset1995.c9users.io:8080/ws` 為你伺服器的 url  
+請複製 __你自己的伺服器 url__ 而不是上面範例中的  
+改 __hero.py__ 中的連線伺服器  
+```
+api.play('你自己的伺服器 url', 'demo-room', '君の名', strategy)
+```
+[競技場](http://ballfight.nctu.me/) 一開始連線設定時請也要記得把 url 改成 __你自己的伺服器 url__  
+
+
 ## 編輯與執行 _hero.py_
 你可以在左邊的框框找到 _hero.py_，點兩下可以打開該檔案(下圖綠色)。  
 ![](../images/c9-5.png)  
@@ -44,21 +63,3 @@
 至此已可以成功執行 _hero.py_ 並連上 TA 的伺服器了～
 ![](../images/c9-final.png)  
 
-
-## 開啟伺服器
-伺服器所需的套件與基本設定已在你執行上面的 `./init-c9.sh` 時都做好了，此處只需要把伺服器開啟。  
-1. 在下方 Panel 中找到 _綠色的 +_ 按鈕按下並選擇 _New Run Configuration_(見下圖)
-    ![](../images/c9-server-0.png)  
-2. 按下 Runner 並選 Crossbar(見下圖)
-    ![](../images/c9-server-1.png)  
-3. __在 Runner 設成 Crossbar__ 的分頁按下該分頁左邊的綠色 Run 按鈕伺服器就會跑起來了
-    ![](../images/c9-server-final.png)  
-
-跑起來後，顯示資訊第一行 _Ballfight wamp router started at: ws://myname-ballfight-sunset1995.c9users.io:8080/ws_ (如上圖)  
-其中 `ws://myname-ballfight-sunset1995.c9users.io:8080/ws` 為你伺服器的 url  
-請複製 __你自己的伺服器 url__ 而不是上面範例中的  
-改 __hero.py__ 中的連線伺服器  
-```
-api.play('你自己的伺服器 url', 'demo-room', '君の名', strategy)
-```
-[競技場](http://ballfight.nctu.me/) 一開始連線設定時請也要記得把 url 改成 __你自己的伺服器 url__  
